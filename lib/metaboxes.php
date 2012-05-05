@@ -1,4 +1,5 @@
 <?php
+
 $locationdetails_5_metabox = array( 
 	'id' => 'locationdetails',
 	'title' => 'Location details',
@@ -11,39 +12,29 @@ $locationdetails_5_metabox = array(
 				array(
 					'name' 			=> 'Location name',
 					'desc' 			=> 'Store name for example',
-					'id' 			=> 'ecpt_locationname',
-					'class' 		=> 'ecpt_locationname',
+					'id' 			=> 'wpmm_location_name',
+					'class' 		=> 'wpmm_location_name',
 					'type' 			=> 'text',
-					'rich_editor' 	=> 0,			
+					'rich_editor' 	=> 1,			
 					'max' 			=> 0													
 				),
 															
 				array(
 					'name' 			=> 'Address',
 					'desc' 			=> 'The address of the entity',
-					'id' 			=> 'ecpt_address_2',
-					'class' 		=> 'ecpt_address_2',
+					'id' 			=> 'wpmm_address',
+					'class' 		=> 'wpmm_address',
 					'type' 			=> 'text',
-					'rich_editor' 	=> 0,			
+					'rich_editor' 	=> 1,			
 					'max' 			=> 0													
 				),
 															
 				array(
-					'name' 			=> 'Longitude',
+					'name' 			=> 'Display on map',
 					'desc' 			=> '',
-					'id' 			=> 'ecpt_longitude',
-					'class' 		=> 'ecpt_longitude',
-					'type' 			=> 'text',
-					'rich_editor' 	=> 0,			
-					'max' 			=> 0													
-				),
-															
-				array(
-					'name' 			=> 'Latitude',
-					'desc' 			=> '',
-					'id' 			=> 'ecpt_latitude',
-					'class' 		=> 'ecpt_latitude',
-					'type' 			=> 'text',
+					'id' 			=> 'ecpt_displayonmap',
+					'class' 		=> 'ecpt_displayonmap',
+					'type' 			=> 'checkbox',
 					'rich_editor' 	=> 0,			
 					'max' 			=> 0													
 				),
@@ -215,7 +206,7 @@ function ecpt_locationdetails_5_save($post_id) {
 		$new = $_POST[$field['id']];
                 
                 // bypass update for lat and longitude
-		if(( 'ecpt_latitude' == $field['id'] ) || ( 'ecpt_longitude' == $field['id'] ))
+		if(( 'wpmm_latitude' == $field['id'] ) || ( 'wpmm_longitude' == $field['id'] ))
                     $new = $old;
 		if ($new && $new != $old) {
 			if($field['type'] == 'date') {
@@ -224,14 +215,14 @@ function ecpt_locationdetails_5_save($post_id) {
 			} else {
 				if(is_string($new) ) {
 					$new = $new;
-                                        if('ecpt_address_2' == $field['id']){
+                                        if('wpmm_address' == $field['id']){
                                             // fetch new coordinates if address has changed
                                             $lat_long = do_geocode_address($new);
                                             
-                                            if (update_post_meta($post_id, $locationdetails_5_metabox['fields'][3]['id'], $lat_long['latitude'] )) {
+                                            if (update_post_meta($post_id, 'wpmm_latitude', $lat_long['latitude'] )) {
                                                 $val = true;
                                             }
-                                            if(update_post_meta($post_id, $locationdetails_5_metabox['fields'][2]['id'], $lat_long['longitude'] )){
+                                            if(update_post_meta($post_id, 'wpmm_longitude', $lat_long['longitude'] )){
                                                 $val = true;
                                             }                                            
                                         }
