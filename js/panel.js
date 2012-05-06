@@ -16,7 +16,7 @@ var data = new storeLocator.StaticDataFeed();
 new storeLocator.View(map, data);
 
   var view = new storeLocator.View(map, data, {
-    //geolocation: false,
+    geolocation: true
     //features: data.getFeatures()
   });
 
