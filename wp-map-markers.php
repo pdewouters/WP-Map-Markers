@@ -76,12 +76,18 @@ function wpmm_fetch_stores(){
     // fetch location posts which have a latitude, meaning geocoding works
       $args = array(
         'post_type' => 'wpmm_location',
+        'post_status' => 'publish',
         'meta_query' => array(
           array(
-            'key' => 'ecpt_latitude',
+            'key' => 'wpmm_latitude',
             'value' => '',
             'compare' => '!='
-          )
+          ),
+          array(
+            'key' => 'wpmm_displayonmap',
+            'value' => '',
+            'compare' => '!='
+          )            
         )
       );
     $locations = get_posts( $args );
@@ -89,10 +95,10 @@ function wpmm_fetch_stores(){
     // fetch posts custom meta fields vaules
     foreach($locations as $location){
         $store_id = $location->ID;
-        $store_name = get_post_meta($location->ID,'ecpt_locationname',true);
-        $store_lat = get_post_meta($location->ID,'ecpt_latitude',true);
-        $store_lng = get_post_meta($location->ID,'ecpt_longitude',true);
-        $store_address = get_post_meta($location->ID,'ecpt_address_2',true);
+        $store_name = get_post_meta($location->ID,'wpmm_location_name',true);
+        $store_lat = get_post_meta($location->ID,'wpmm_latitude',true);
+        $store_lng = get_post_meta($location->ID,'wpmm_longitude',true);
+        $store_address = get_post_meta($location->ID,'wpmm_address',true);
         $store_permalink = $location->post_permalink;
         $stores[] = array(
             'id' => $store_id,
