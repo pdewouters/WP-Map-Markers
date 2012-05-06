@@ -82,7 +82,12 @@ function wpmm_fetch_stores(){
             'key' => 'wpmm_latitude',
             'value' => '',
             'compare' => '!='
-          )
+          ),
+          array(
+            'key' => 'wpmm_displayonmap',
+            'value' => '',
+            'compare' => '!='
+          )            
         )
       );
     $locations = get_posts( $args );

@@ -32,8 +32,8 @@ $locationdetails_5_metabox = array(
 				array(
 					'name' 			=> 'Display on map',
 					'desc' 			=> '',
-					'id' 			=> 'ecpt_displayonmap',
-					'class' 		=> 'ecpt_displayonmap',
+					'id' 			=> 'wpmm_displayonmap',
+					'class' 		=> 'wpmm_displayonmap',
 					'type' 			=> 'checkbox',
 					'rich_editor' 	=> 0,			
 					'max' 			=> 0													
