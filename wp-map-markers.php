@@ -32,7 +32,9 @@ License: GPLv2
  */
 
 // Load required files
+
 require_once dirname(__FILE__ ) .  '/lib/post-types.php';
+require_once dirname(__FILE__ ) .  '/lib/taxonomies.php';
 require_once dirname(__FILE__ ) .  '/lib/metaboxes.php';
 
 define ( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
@@ -41,6 +43,13 @@ add_action( 'plugins_loaded','wpmm_plugin_setup' );
 
 // Initialize plugin
 function wpmm_plugin_setup(){
+    
+    /* Set constant path to the Cleaner Gallery plugin directory. */
+    define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
+
+    /* Set constant path to the Cleaner Gallery plugin URL. */
+    define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
+        
     add_action( 'wp_enqueue_scripts', 'wpmm_enqueue_scripts' );
 }
 
@@ -51,20 +60,25 @@ function wpmm_enqueue_scripts(){
     // http://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&sensor=SET_TO_TRUE_OR_FALSE
     wp_enqueue_script( 'maps-api-js','http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places' );
     
+     wp_enqueue_script( 'infobubble-js', 'http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobubble/src/infobubble-compiled.js',array( 'jquery', 'maps-api-js' ) );   
     // Loads the Google Store Locator library, depends on jQuery
-    wp_enqueue_script( 'store-locator-js', plugins_url( 'js/store-locator.compiled.js', __FILE__ ),array( 'jquery', 'maps-api-js' ) );
+    wp_enqueue_script( 'store-locator-js', plugins_url( 'js/store-locator.compiled.js', __FILE__ ),array( 'jquery', 'maps-api-js', 'infobubble-js' ) );
     
     // Loads the data handler script
-    //wp_enqueue_script( 'data-feed-js', plugins_url( 'js/wpmm-static-ds.js', __FILE__ ),array( 'jquery','store-locator-js', 'maps-api-js' ) );
- 
-    
-    // Loads the panel script
-    wp_enqueue_script( 'panel-js', plugins_url( 'js/panel.js', __FILE__ ),array( 'jquery','store-locator-js', 'maps-api-js' ) ); 
-    
-     // make stored stores available to map script
+    wp_enqueue_script( 'data-feed-js', plugins_url( 'js/wpmm-static-ds.js', __FILE__ ),array( 'jquery','store-locator-js', 'maps-api-js','infobubble-js' ) );
+     
+    // make stored stores available to map script
     $stores = json_encode( wpmm_fetch_stores() );
-
-    wp_localize_script( 'panel-js', 'wpmm_stores', $stores );   
+    wp_localize_script( 'data-feed-js', 'wpmm_stores', $stores );  
+    
+    $wpmm_all_features = json_encode( wpmm_get_all_features() );
+    wp_localize_script( 'data-feed-js', 'wpmm_features', $wpmm_all_features );
+     
+    // Loads the panel script
+    wp_enqueue_script( 'panel-js', plugins_url( 'js/panel.js', __FILE__ ),array( 'jquery','store-locator-js', 'maps-api-js','infobubble-js' ) ); 
+    
+     $wpmm_settings = json_encode( wpmm_global_settings() );
+    wp_localize_script( 'panel-js', 'wpmm_settings', $wpmm_settings ); 
     
     // Loads the Store Locator default CSS styles
     wp_enqueue_style( 'store-locator-style-css', plugins_url('css/storelocator.css', __FILE__ ) );
@@ -94,6 +108,8 @@ function wpmm_fetch_stores(){
     
     // fetch posts custom meta fields vaules
     foreach($locations as $location){
+        // get features
+        $features = wpmm_get_location_features($location);
         $store_id = $location->ID;
         $store_name = get_post_meta($location->ID,'wpmm_location_name',true);
         $store_lat = get_post_meta($location->ID,'wpmm_latitude',true);
@@ -106,9 +122,42 @@ function wpmm_fetch_stores(){
             'store_lat'=> $store_lat,
             'store_lng'=> $store_lng,
             'address' => $store_address, 
-            'store_permalink' => $store_permalink
+            'store_permalink' => $store_permalink,
+            'store_features' => $features
             );
     }
 
     return $stores;
+}
+
+function wpmm_global_settings(){
+    
+    // TODO fetch this from settings page
+    $marker_icon = WPMM_URL . 'images/medicare.png';
+    $marker_shadow = WPMM_URL . 'images/medicare-shadow.png';
+    $default_zoom = 8;
+    $map_center_lat = 51.4992913;
+    $map_center_lng = -0.1639785;
+
+    $wpmm_settings[] = array(
+        'marker_icon' => $marker_icon, 
+        'marker_shadow' => $marker_shadow, 
+        'default_zoom' => $default_zoom ,
+        'map_center_lat' => $map_center_lat, 
+        'map_center_lng' => $map_center_lng);
+    return $wpmm_settings;
+}
+
+function wpmm_get_location_features($post){
+        //Returns Array of Term Names for "my_term"
+        $term_list = wp_get_post_terms($post->ID, 'wpmm_feature', array("fields" => "names"));  
+        return $term_list;
+}
+
+function wpmm_get_all_features(){
+    
+    //returns all terms fron the taxonomy features
+    $features = get_terms('wpmm_feature');
+    return $features;
+    //print_r($features);die();
 }
