@@ -23,7 +23,7 @@ google.maps.event.addDomListener(window, 'load', function() {
   var data = new WPmmDataSource;
 
   var view = new storeLocator.View(map, data, {
-    geolocation: false,
+    geolocation: true,
     features: data.getFeatures()
   });
 

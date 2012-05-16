@@ -62,7 +62,8 @@ function wpmm_initialize_plugin_options() {
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'wpmm_plugin_map_options',
-		'wpmm_plugin_map_options'
+		'wpmm_plugin_map_options',
+                'wpmm_plugin_validate_input'
 	);
 
 
@@ -176,6 +177,28 @@ function wpmm_plugin_display() {
 <?php
 } // end wpmm_plugin_display
 
+function wpmm_plugin_validate_input( $input ) {
+
+	// Create our array for storing the validated options
+	$output = array();
+
+	// Loop through each of the incoming options
+	foreach( $input as $key => $value ) {
+
+		// Check to see if the current option has a value. If so, process it.
+		if( isset( $input[$key] ) ) {
+
+			// Strip all HTML and PHP tags and properly handle quoted strings
+			$output[$key] = strip_tags( stripslashes( $input[ $key ] ) );
+
+		} // end if
+
+	} // end foreach
+
+	// Return the array processing any additional functions filtered by this action
+	return apply_filters( 'wpmm_plugin_validate_input', $output, $input );
+
+}
 
 
 ?>

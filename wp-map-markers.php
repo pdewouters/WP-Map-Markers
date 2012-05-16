@@ -121,10 +121,10 @@ function wpmm_fetch_stores(){
         // get features
         $features = wpmm_get_location_features($location);
         $store_id = $location->ID;
-        $store_name = get_post_meta($location->ID,'wpmm_location_name',true);
-        $store_lat = get_post_meta($location->ID,'wpmm_latitude',true);
-        $store_lng = get_post_meta($location->ID,'wpmm_longitude',true);
-        $store_address = get_post_meta($location->ID,'wpmm_address',true);
+        $store_name = sanitize_text_field( get_post_meta( $location->ID,'wpmm_location_name',true ) );
+        $store_lat = sanitize_text_field( get_post_meta($location->ID,'wpmm_latitude',true ) );
+        $store_lng = sanitize_text_field( get_post_meta($location->ID,'wpmm_longitude',true ) );
+        $store_address = sanitize_text_field( get_post_meta($location->ID,'wpmm_address',true ) );
         $store_permalink = $location->post_permalink;
         $stores[] = array(
             'id' => $store_id,
@@ -146,15 +146,15 @@ function wpmm_global_settings(){
     $marker_icon = WPMM_URL . 'images/medicare.png';
     $marker_shadow = WPMM_URL . 'images/medicare-shadow.png';
     if( get_option( 'default_zoom' ) )
-        $default_zoom = $options['default_zoom'];
+        $default_zoom = sanitize_text_field( $options['default_zoom'] );
     else
         $default_zoom = 8;
     if( get_option('default_latitude') )    
-        $map_center_lat =  $options['default_latitude'] ;
+        $map_center_lat =  sanitize_text_field( $options['default_latitude'] );
     else
         $map_center_lat = 38.8978881835938;
     if( get_option('default_longitude') )    
-        $map_center_lng =  $options['default_longitude'] ;
+        $map_center_lng =  sanitize_text_field( $options['default_longitude'] );
     else 
         $map_center_lng = -77.0363311767578;
 
