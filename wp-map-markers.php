@@ -50,6 +50,16 @@ function wpmm_plugin_setup(){
     /* Set constant path to the Cleaner Gallery plugin URL. */
     define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
         
+    
+    if( is_admin() ) {
+        
+        /* Load translations. */
+        load_plugin_textdomain( 'map-markers', false, 'wp-map-markers/languages' );
+
+        /* Load the plugin's admin file. */
+        require_once( WPMM_DIR . '/lib/admin.php' );        
+    }
+    
     add_action( 'wp_enqueue_scripts', 'wpmm_enqueue_scripts' );
 }
 
@@ -131,13 +141,22 @@ function wpmm_fetch_stores(){
 }
 
 function wpmm_global_settings(){
-    
+    $options = get_option( 'wpmm_plugin_map_options' );
     // TODO fetch this from settings page
     $marker_icon = WPMM_URL . 'images/medicare.png';
     $marker_shadow = WPMM_URL . 'images/medicare-shadow.png';
-    $default_zoom = 8;
-    $map_center_lat = 51.4992913;
-    $map_center_lng = -0.1639785;
+    if( get_option( 'default_zoom' ) )
+        $default_zoom = $options['default_zoom'];
+    else
+        $default_zoom = 8;
+    if( get_option('default_latitude') )    
+        $map_center_lat =  $options['default_latitude'] ;
+    else
+        $map_center_lat = 38.8978881835938;
+    if( get_option('default_longitude') )    
+        $map_center_lng =  $options['default_longitude'] ;
+    else 
+        $map_center_lng = -77.0363311767578;
 
     $wpmm_settings[] = array(
         'marker_icon' => $marker_icon, 
