@@ -36,6 +36,7 @@ License: GPLv2
 require_once dirname(__FILE__ ) .  '/lib/post-types.php';
 require_once dirname(__FILE__ ) .  '/lib/taxonomies.php';
 require_once dirname(__FILE__ ) .  '/lib/metaboxes.php';
+require_once dirname(__FILE__ ) .  '/lib/shortcodes.php';
 
 define ( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
 
@@ -61,6 +62,8 @@ function wpmm_plugin_setup(){
     }
     
     add_action( 'wp_enqueue_scripts', 'wpmm_enqueue_scripts' );
+    
+    add_shortcode('wpmm_map','wpmm_do_main_map');
 }
 
 // Load necessary javascript and CSS files
@@ -125,7 +128,8 @@ function wpmm_fetch_stores(){
         $store_lat = sanitize_text_field( get_post_meta($location->ID,'wpmm_latitude',true ) );
         $store_lng = sanitize_text_field( get_post_meta($location->ID,'wpmm_longitude',true ) );
         $store_address = sanitize_text_field( get_post_meta($location->ID,'wpmm_address',true ) );
-        $store_permalink = $location->post_permalink;
+        
+        $store_permalink = get_permalink( $location->ID );
         $stores[] = array(
             'id' => $store_id,
             'store_name'=> $store_name,

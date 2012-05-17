@@ -20,7 +20,7 @@ function wpmm_initialize_plugin_options() {
 	// First, we register a section. This is necessary since all future options must belong to one.
 	add_settings_section(
 		'general_settings_section',			// ID used to identify this section and with which to register options
-		'Map marker Options',					// Title to be displayed on the administration page
+		__('Map marker Options','map-markers'),					// Title to be displayed on the administration page
 		'wpmm_general_options_callback',	// Callback used to render the description of the section
 		'wpmm_plugin_map_options'							// Page on which to add this section of options
 	);
@@ -28,34 +28,34 @@ function wpmm_initialize_plugin_options() {
 	// Next, we will introduce the fields for toggling the visibility of content elements.
 	add_settings_field(
 		'default_latitude',						// ID used to identify the field throughout the plugin
-		'Default latitude',							// The label to the left of the option interface element
+		__('Default latitude','map-markers'),							// The label to the left of the option interface element
 		'wpmm_default_latitude_callback',	// The name of the function responsible for rendering the option interface
 		'wpmm_plugin_map_options',							// The page on which this option will be displayed
 		'general_settings_section',			// The name of the section to which this field belongs
 		array(								// The array of arguments to pass to the callback. In this case, just a description.
-			'Define the default latitude.'
+			__('Define the default latitude.','map-markers')
 		)
 	);
 
 	add_settings_field(
 		'default_longitude',
-		'Defaault longitude',
+		__('Default longitude','map-markers'),
 		'wpmm_default_longitude_callback',
 		'wpmm_plugin_map_options',
 		'general_settings_section',
 		array(
-			'Define the default longitude.'
+			__('Define the default longitude.','map-markers')
 		)
 	);
 
 	add_settings_field(
 		'default_zoom',
-		'Default zoom',
+		__('Default zoom','map-markers'),
 		'wpmm_default_zoom_callback',
 		'wpmm_plugin_map_options',
 		'general_settings_section',
 		array(
-			'Define the default zoom.'
+			__('Define the default zoom.','map-markers')
 		)
 	);
 
@@ -80,7 +80,7 @@ function wpmm_initialize_plugin_options() {
  * in the add_settings_section function.
  */
 function wpmm_general_options_callback() {
-	echo '<p>Set the Google maps defaults.</p>';
+	echo '<p>' . __('Set the Google maps defaults.', 'map-markers') . '</p>';
 } // end wpmm_general_options_callback
 
 /* ------------------------------------------------------------------------ *
@@ -140,10 +140,10 @@ function wpmm_default_zoom_callback($args) {
 
 function wpmm_create_menu_page() {
 
-	add_plugins_page(
-		'Map Markers Options',			// The title to be displayed on the corresponding page for this menu
-		'Map Markers',					// The text to be displayed for this actual menu item
-		'administrator',			// Which type of users can see this menu
+	add_options_page(
+		__('Map Markers Options','map-markers'),			// The title to be displayed on the corresponding page for this menu
+		__('Map Markers','map-markers'),					// The text to be displayed for this actual menu item
+		apply_filters( 'wpmm_map_markers_capability', 'manage_options' ),			// Which type of users can see this menu
 		'wpmm',					// The unique ID - that is, the slug - for this menu item
 		'wpmm_plugin_display',// The name of the function to call when rendering the menu for this page
 		''
@@ -160,7 +160,7 @@ function wpmm_plugin_display() {
 
 		<!-- Add the icon to the page -->
 		<div id="icon-plugins" class="icon32"></div>
-		<h2>Map Markers Options</h2>
+		<h2><?php _e('Map Markers Options','map-markers'); ?></h2>
 
 		<!-- Make a call to the WordPress function for rendering errors when settings are saved. -->
 		<?php settings_errors(); ?>
@@ -200,5 +200,21 @@ function wpmm_plugin_validate_input( $input ) {
 
 }
 
+
+// integrate with Members plugin
+if ( function_exists( 'members_plugin_init' ) )
+	add_filter( 'wpmm_map_markers_capability', 'wpmm_unique_capability' );
+
+function wpmm_unique_capability( $cap ) {
+	return 'edit_my_plugin_settings';
+}
+
+if ( function_exists( 'members_get_capabilities' ) )
+	add_filter( 'members_get_capabilities', 'wpmm_extra_caps' );
+
+function wpmm_extra_caps( $caps ) {
+	$caps[] = 'edit_map_markers_settings';
+	return $caps;
+}
 
 ?>
