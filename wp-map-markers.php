@@ -40,6 +40,17 @@ require_once dirname(__FILE__ ) .  '/lib/shortcodes.php';
 
 define ( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
 
+/* Register activation hook. */
+register_activation_hook( __FILE__, 'wpmm_activation' );
+
+function wpmm_activation(){
+    $role = get_role( 'administrator' );
+
+    if ( !empty( $role ) ) {
+            $role->add_cap( 'wpmm_unique_capability' );
+    }    
+}
+
 add_action( 'plugins_loaded','wpmm_plugin_setup' );
 
 // Initialize plugin
@@ -146,28 +157,38 @@ function wpmm_fetch_stores(){
 
 function wpmm_global_settings(){
     $options = get_option( 'wpmm_plugin_map_options' );
+    //print_r($options);die();
     // TODO fetch this from settings page
     $marker_icon = WPMM_URL . 'images/medicare.png';
     $marker_shadow = WPMM_URL . 'images/medicare-shadow.png';
-    if( get_option( 'default_zoom' ) )
+    
+    if( $options['default_zoom'] )
         $default_zoom = sanitize_text_field( $options['default_zoom'] );
     else
         $default_zoom = 8;
-    if( get_option('default_latitude') )    
+    if( $options['default_latitude'] )    
         $map_center_lat =  sanitize_text_field( $options['default_latitude'] );
     else
         $map_center_lat = 38.8978881835938;
-    if( get_option('default_longitude') )    
+    if( $options['default_longitude'] )    
         $map_center_lng =  sanitize_text_field( $options['default_longitude'] );
     else 
         $map_center_lng = -77.0363311767578;
 
+    if( $options['map_type'] )
+	$map_type = sanitize_text_field( $options['map_type'] );
+    else
+        $map_type = 'google.maps.MapTypeId.ROADMAP';
+
+    
     $wpmm_settings[] = array(
         'marker_icon' => $marker_icon, 
         'marker_shadow' => $marker_shadow, 
         'default_zoom' => $default_zoom ,
         'map_center_lat' => $map_center_lat, 
-        'map_center_lng' => $map_center_lng);
+        'map_center_lng' => $map_center_lng,
+        'map_type' => 'google.maps.MapTypeId.' . strtoupper( $map_type )
+        );
     return $wpmm_settings;
 }
 

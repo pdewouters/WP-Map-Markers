@@ -15,7 +15,7 @@ google.maps.event.addDomListener(window, 'load', function() {
   var map = new google.maps.Map(document.getElementById('map-canvas'), {
     center: new google.maps.LatLng(parseFloat(globalSettings[0].map_center_lat), parseFloat(globalSettings[0].map_center_lng)),
     zoom: parseInt(globalSettings[0].default_zoom),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: eval(globalSettings[0].map_type)
   });
 
   var panelDiv = document.getElementById('panel');

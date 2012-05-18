@@ -58,6 +58,17 @@ function wpmm_initialize_plugin_options() {
 			__('Define the default zoom.','map-markers')
 		)
 	);
+        
+	add_settings_field(
+		'map_type',
+		__('Map Type','map-markers'),
+		'wpmm_map_type_callback',
+		'wpmm_plugin_map_options',
+		'general_settings_section',
+		array(
+			__('Choose the map type.','map-markers')
+		)
+	);        
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -106,7 +117,7 @@ function wpmm_default_latitude_callback($args) {
 
 	echo $html;
 
-} // end wpmm_toggle_header_callback
+} // end wpmm_default_latitude_callback
 
 function wpmm_default_longitude_callback($args) {
     
@@ -121,12 +132,12 @@ function wpmm_default_longitude_callback($args) {
 
 	echo $html;
 
-} // end wpmm_toggle_content_callback
+} // end wpmm_default_longitude_callback
 
-function wpmm_default_zoom_callback($args) {
+function wpmm_default_zoom_callback( $args ) {
     
             // Read the options collection
-        $options = get_option('wpmm_plugin_map_options');
+        $options = get_option( 'wpmm_plugin_map_options' );
 
 	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
 	$html = '<input type="text" id="wpmm_plugin_map_options[default_zoom]" name="wpmm_plugin_map_options[default_zoom]" value="' . $options['default_zoom'] . '" />'; 
@@ -136,14 +147,31 @@ function wpmm_default_zoom_callback($args) {
 
 	echo $html;
 
-} // end wpmm_toggle_footer_callback
+} // end wpmm_default_zoom_callback
+
+function wpmm_map_type_callback( $args ) {
+
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	$html = '<select id="map_type" name="wpmm_plugin_map_options[map_type]">';
+		$html .= '<option value="default">Select a map type...</option>';
+		$html .= '<option value="roadmap"' . selected( $options['map_type'], 'roadmap', false) . '>Roadmap</option>';
+		$html .= '<option value="satellite"' . selected( $options['map_type'], 'satellite', false) . '>Satellite</option>';
+		$html .= '<option value="hybrid"' . selected( $options['map_type'], 'hybrid', false) . '>Hybrid</option>';
+                $html .= '<option value="terrain"' . selected( $options['map_type'], 'terrain', false) . '>Terrain</option>';          
+	$html .= '</select>';
+
+	echo $html;
+
+} // end sandbox_radio_element_callback
+
 
 function wpmm_create_menu_page() {
-
-	add_options_page(
+    global $wppmm_settings_page;
+	$wppmm_settings_page = add_options_page(
 		__('Map Markers Options','map-markers'),			// The title to be displayed on the corresponding page for this menu
 		__('Map Markers','map-markers'),					// The text to be displayed for this actual menu item
-		apply_filters( 'wpmm_map_markers_capability', 'manage_options' ),			// Which type of users can see this menu
+		'wpmm_unique_capability',			// Which type of users can see this menu
 		'wpmm',					// The unique ID - that is, the slug - for this menu item
 		'wpmm_plugin_display',// The name of the function to call when rendering the menu for this page
 		''
@@ -200,7 +228,6 @@ function wpmm_plugin_validate_input( $input ) {
 
 }
 
-
 // integrate with Members plugin
 if ( function_exists( 'members_plugin_init' ) )
 	add_filter( 'wpmm_map_markers_capability', 'wpmm_unique_capability' );
@@ -208,13 +235,4 @@ if ( function_exists( 'members_plugin_init' ) )
 function wpmm_unique_capability( $cap ) {
 	return 'edit_my_plugin_settings';
 }
-
-if ( function_exists( 'members_get_capabilities' ) )
-	add_filter( 'members_get_capabilities', 'wpmm_extra_caps' );
-
-function wpmm_extra_caps( $caps ) {
-	$caps[] = 'edit_map_markers_settings';
-	return $caps;
-}
-
 ?>
