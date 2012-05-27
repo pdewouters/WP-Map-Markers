@@ -3,6 +3,7 @@
 // - custom info window (using Info Bubble)
 // - custom info window content (+ store hours)
 
+
 var globalSettings = jQuery.parseJSON(wpmm_settings);
 var ICON = new google.maps.MarkerImage(globalSettings[0].marker_icon, null, null,
     new google.maps.Point(14, 13));
@@ -47,7 +48,7 @@ google.maps.event.addDomListener(window, 'load', function() {
 
     var html = ['<div class="store"><div class="title">', details.title,
       '</div><div class="address">', details.address, '</div>',
-      '<div class="hours misc">', details.hours, '</div></div>'].join('');
+      '<div class="permalink misc">', details.store_permalink, '</div></div>'].join('');
 
     infoBubble.setContent(jQuery(html)[0]);
     return infoBubble;

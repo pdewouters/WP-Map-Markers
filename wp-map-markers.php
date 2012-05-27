@@ -95,14 +95,15 @@ function wpmm_enqueue_scripts(){
     $stores = json_encode( wpmm_fetch_stores() );
     wp_localize_script( 'data-feed-js', 'wpmm_stores', $stores );  
     
-    $wpmm_all_features = json_encode( wpmm_get_all_features() );
-    wp_localize_script( 'data-feed-js', 'wpmm_features', $wpmm_all_features );
-     
+       $wpmm_all_features = json_encode( wpmm_get_all_features() );
+    wp_localize_script( 'data-feed-js', 'wpmm_features', $wpmm_all_features );  
     // Loads the panel script
     wp_enqueue_script( 'panel-js', plugins_url( 'js/panel.js', __FILE__ ),array( 'jquery','store-locator-js', 'maps-api-js','infobubble-js' ) ); 
     
      $wpmm_settings = json_encode( wpmm_global_settings() );
     wp_localize_script( 'panel-js', 'wpmm_settings', $wpmm_settings ); 
+    
+
     
     // Loads the Store Locator default CSS styles
     wp_enqueue_style( 'store-locator-style-css', plugins_url('css/storelocator.css', __FILE__ ) );
@@ -194,7 +195,7 @@ function wpmm_global_settings(){
 
 function wpmm_get_location_features($post){
         //Returns Array of Term Names for "my_term"
-        $term_list = wp_get_post_terms($post->ID, 'wpmm_feature', array("fields" => "names"));  
+        $term_list = wp_get_post_terms($post->ID, 'wpmm_feature', array("fields" => "all"));  
         return $term_list;
 }
 
