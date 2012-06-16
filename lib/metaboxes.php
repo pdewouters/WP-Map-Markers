@@ -38,21 +38,35 @@ function cmb_wpmm_metaboxes( array $meta_boxes ) {
 			array(
 				'name' => 'Dsiplay on map',
 				'desc' => 'check to display this location on the global map',
-				'id'   => $prefix . 'displayonmap',
+				'id' => $prefix . 'displayonmap',
 				'type' => 'checkbox',
-			),	
+			),
 			array(
 				'name' => 'Latitude',
 				'desc' => 'the latitude of the location',
 				'id' => $prefix . 'latitude',
 				'type' => 'text',
-			),		
+			),
 			array(
 				'name' => 'Longitude',
 				'desc' => 'the longitude of the location',
 				'id' => $prefix . 'longitude',
 				'type' => 'text',
-			),					
+			),
+			array(
+				'name' => 'Marker icon',
+				'desc' => 'select the marker icon',
+				'id' => $prefix . 'marker_icon',
+				'type' => 'radio',
+				'options' => array(
+					array( 'name' => 'Blue', 'value' => 'blue-marker', ),
+					array( 'name' => 'Green', 'value' => 'green-marker', ),
+					array( 'name' => 'Orange', 'value' => 'orange-marker', ),
+					array( 'name' => 'Yellow', 'value' => 'yellow-marker', ),
+					array( 'name' => 'Red', 'value' => 'red-marker', ),
+					array( 'name' => 'Pink', 'value' => 'pink-marker', ),
+				),
+			),
 		),
 	);
 
@@ -60,8 +74,6 @@ function cmb_wpmm_metaboxes( array $meta_boxes ) {
 
 	return $meta_boxes;
 }
-
-
 
 add_action( 'init', 'cmb_initialize_cmb_meta_boxes', 9999 );
 

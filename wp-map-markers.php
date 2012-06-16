@@ -77,14 +77,33 @@ function wpmm_plugin_setup() {
 	}
 
 
-	add_action( 'wp_enqueue_scripts', 'wpmm_enqueue_scripts' );
+	add_action( 'admin_enqueue_scripts', 'wpmm_enqueue_scripts' );
 
 	add_shortcode( 'wpmm_map', 'wpmm_do_main_map' );
 }
 
 // Load necessary javascript and CSS files
-function wpmm_enqueue_scripts() {
+function wpmm_enqueue_scripts( $hook ) {
+	$post_type = get_current_screen()->id; // when on post.php or post-new.php
 	
+	if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
+		return;
+
+	global $post;
+
+	$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
+	$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
+
+
+	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
+	wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
+	wp_localize_script( 'display-map', 'wpmm_vars', array(
+		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
+		'wpmm_post_id' => $post->ID,
+		'lat' => $lat,
+		'lng' => $lng
+			)
+	);
 }
 
 // This function gets the stores from the database
@@ -120,6 +139,7 @@ function wpmm_fetch_stores() {
 		$store_lat = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_latitude', true ) );
 		$store_lng = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_longitude', true ) );
 		$store_address = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_address', true ) );
+		$store_marker =  WPMM_URL . '/images/' . get_post_meta( $location->ID, '_wpmm_marker_icon', true ) . '.png' ;
 
 		$store_permalink = get_permalink( $location->ID );
 		$stores[] = array(
@@ -129,6 +149,7 @@ function wpmm_fetch_stores() {
 			'store_lng' => $store_lng,
 			'address' => $store_address,
 			'store_permalink' => $store_permalink,
+			'store_marker' => $store_marker,
 			'store_features' => $features
 		);
 	}
@@ -140,8 +161,8 @@ function wpmm_global_settings() {
 	$options = get_option( 'wpmm_plugin_map_options' );
 	//print_r($options);die();
 	// TODO fetch this from settings page
-	$marker_icon = WPMM_URL . 'images/medicare.png';
-	$marker_shadow = WPMM_URL . 'images/medicare-shadow.png';
+	//$marker_icon = WPMM_URL . 'images/blue-marker.png';
+	$marker_shadow = WPMM_URL . 'images/marker-shadow.png';
 
 	if ( $options['default_zoom'] )
 		$default_zoom = sanitize_text_field( $options['default_zoom'] );
@@ -163,7 +184,6 @@ function wpmm_global_settings() {
 
 
 	$wpmm_settings[] = array(
-		'marker_icon' => $marker_icon,
 		'marker_shadow' => $marker_shadow,
 		'default_zoom' => $default_zoom,
 		'map_center_lat' => $map_center_lat,

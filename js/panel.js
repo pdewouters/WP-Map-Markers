@@ -31,7 +31,7 @@ google.maps.event.addDomListener(window, 'load', function() {
   view.createMarker = function(store) {
     var markerOptions = {
       position: store.getLocation(),
-      icon: ICON,
+      icon: store.getDetails().icon,
       shadow: SHADOW,
       title: store.getDetails().title
     };

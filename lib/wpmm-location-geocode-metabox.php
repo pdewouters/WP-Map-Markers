@@ -15,14 +15,14 @@ function wpmm_mbe_function( $post ) {
 
 	echo 'Please fill out the information below';
 	?>
-	<p>Address: <input type="text" id="wpmm_mbe_address" name="wpmm_mbe_address" value="<?php echo esc_attr( $wpmm_mbe_address ); ?>" /></p>
+	<p>Address: <input type="text" class="widefat" id="wpmm_mbe_address" name="wpmm_mbe_address" value="<?php echo esc_attr( $wpmm_mbe_address ); ?>" /></p>
 	<form id="wpmm-form" action="" method="POST">
 		<div>
 			<input id="wpmm_geocode_button" class="button" type="button" value="Geocode address" />
 			<img src="<?php echo admin_url( '/images/wpspin_light.gif' ); ?>" class="waiting" id="wpmm_loading" style="display:none;"/>
 		</div>
 	</form>
-	<div id="wpmm_results"></div>
+	<div style="width: 100%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>
 	<?php
 }
 
@@ -40,19 +40,21 @@ function wpmm_mbe_save_meta( $post_id ) {
 }
 
 function wpmm_load_scripts( $hook ) {
-	$post_type = get_current_screen()->id; // when on post.php or post-new.php
+	//global $post;
+	//$post_type = get_current_screen()->id; // when on post.php or post-new.php
 
-	if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
-		return;
-
-	wp_enqueue_script( 'wpmm-ajax', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/wpmm-ajax.js', array( 'jquery' ) );
-	wp_localize_script( 'wpmm-ajax', 'wpmm_vars', array(
-		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' )
-			)
-	);
+	//if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
+	//	return;
+	//wp_enqueue_script( 'maps-api-js', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
+	//wp_enqueue_script( 'wpmm-ajax', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/wpmm-ajax.js', array( 'jquery' ) );
+	//wp_localize_script( 'wpmm-ajax', 'wpmm_vars', array(
+	//	'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
+	//	'wpmm_post_id' => $post->ID
+	//		)
+	//);
 }
 
-add_action( 'admin_enqueue_scripts', 'wpmm_load_scripts' );
+//add_action( 'admin_enqueue_scripts', 'wpmm_load_scripts' );
 
 function wpmm_process_ajax() {
 
@@ -60,7 +62,7 @@ function wpmm_process_ajax() {
 		die( 'Permissions check failed' );
 
 
-	$lat_lng = do_geocode_address( $_POST['wpmm_address'] );
+	$lat_lng = do_geocode_address( $_POST['wpmm_address'], $_POST['wpmm_post_id'] );
 	
 	echo json_encode($lat_lng);
 	die();
@@ -71,8 +73,16 @@ add_action( 'wp_ajax_wpmm_get_results', 'wpmm_process_ajax' );
 // Geocodes an address and returns an array with long / lat
 
 
-function do_geocode_address( $address ) {
+function do_geocode_address( $address, $post_id ) {
 
+	
+	if( get_post_meta( $post_id , '_wpmm_latitude')){
+			$lat_long = array(
+		'latitude' => get_post_meta( $post_id ,'_wpmm_latitude'),
+		'longitude' => get_post_meta( $post_id ,'_wpmm_longitude')
+	);
+	}
+			
 	// Send GET request to Google Maps API
 	$api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=';
 	$api_response = wp_remote_get( $api_url . urlencode( $address ) );
