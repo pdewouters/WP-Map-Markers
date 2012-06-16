@@ -7,12 +7,12 @@ function register_cpt_wpmm_location() {
 
     $labels = array( 
         'name' => _x( 'Locations', 'post type general name' ),
-        'singular_name' => _x( 'Locations', 'post type singular name' ),
+        'singular_name' => _x( 'Location', 'post type singular name' ),
         'add_new' => _x( 'Add New', 'wpmm_location' ),
-        'add_new_item' => __( 'Add New Locations', 'wpmm_location' ),
-        'edit_item' => __( 'Edit Locations', 'wpmm_location' ),
-        'new_item' => __( 'New Locations', 'wpmm_location' ),
-        'view_item' => __( 'View Locations', 'wpmm_location' ),
+        'add_new_item' => __( 'Add New Location', 'wpmm_location' ),
+        'edit_item' => __( 'Edit Location', 'wpmm_location' ),
+        'new_item' => __( 'New Location', 'wpmm_location' ),
+        'view_item' => __( 'View Location', 'wpmm_location' ),
         'search_items' => __( 'Search Locations', 'wpmm_location' ),
         'not_found' => __( 'No locations found', 'wpmm_location' ),
         'not_found_in_trash' => __( 'No locations found in Trash', 'wpmm_location' ),

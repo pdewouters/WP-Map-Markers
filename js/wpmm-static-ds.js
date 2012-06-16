@@ -8,7 +8,9 @@ function WPmmDataSource() {
 
   var that = this;
 
-that.setFeatures_(wpmm_features);
+if(wpmm_features.length > 0)
+    that.setFeatures_(wpmm_features);
+if('null' != wpmm_stores )
     that.setStores(that.parse_(wpmm_stores));
 
 }
