@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-
+ // console.log(wpmm_vars);
     if(wpmm_vars != 'null')
         var center = new google.maps.LatLng(wpmm_vars.lat[0], wpmm_vars.lng[0]);
     else

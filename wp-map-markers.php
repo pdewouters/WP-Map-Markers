@@ -2,9 +2,9 @@
 
 /*
   Plugin Name: WP Map markers
-  Plugin URI: http://wpconsult.net/wp-map-markers
+  Plugin URI: http://wpmapmarkers.com
   Description: Allows you to mark your store locations on a Google map. Searchable and gives driving directions. Uses geolocation.
-  Version: 0.0.1
+  Version: 0.9
   Author: Paul de Wouters
   Author URI: http://wpconsult.net
   License: GPLv2
@@ -55,6 +55,7 @@ add_action( 'plugins_loaded', 'wpmm_plugin_setup' );
 // Initialize plugin
 function wpmm_plugin_setup() {
 
+	add_image_size('store-thumb', 50, 50, true);
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -85,14 +86,33 @@ function wpmm_plugin_setup() {
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
 	$post_type = get_current_screen()->id; // when on post.php or post-new.php
-	
-	if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
+
+	if ( ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
 		return;
 
 	global $post;
+	$options = get_option( 'wpmm_plugin_map_options' );
+	if ( get_post_meta( $post->ID, '_wpmm_latitude' ) ) {
+		$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
+	} else {
 
-	$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
-	$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
+		if ( $options['default_latitude'] ) {
+			$lat = sanitize_text_field( $options['default_latitude'] );
+		} else {
+			$lat = 38.898748;
+		}
+	}
+
+	if ( get_post_meta( $post->ID, '_wpmm_longitude' ) )
+		$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
+	else {
+		if ( $options['default_longitude'] ) {
+			$lng = sanitize_text_field( $options['default_longitude'] );
+		} else {
+			$lng = -77.037684;
+		}
+	}
+
 
 
 	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
@@ -139,9 +159,13 @@ function wpmm_fetch_stores() {
 		$store_lat = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_latitude', true ) );
 		$store_lng = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_longitude', true ) );
 		$store_address = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_address', true ) );
-		$store_marker =  WPMM_URL . '/images/' . get_post_meta( $location->ID, '_wpmm_marker_icon', true ) . '.png' ;
-
+		$store_marker = WPMM_URL . '/images/' . get_post_meta( $location->ID, '_wpmm_marker_icon', true ) . '.png';
 		$store_permalink = get_permalink( $location->ID );
+		$store_thumbnail = '';
+		if(  has_post_thumbnail( $location->ID )){
+			$store_thumbnail = get_the_post_thumbnail($location->ID, 'store-thumb');
+		}
+		
 		$stores[] = array(
 			'id' => $store_id,
 			'store_name' => $store_name,
@@ -150,6 +174,7 @@ function wpmm_fetch_stores() {
 			'address' => $store_address,
 			'store_permalink' => $store_permalink,
 			'store_marker' => $store_marker,
+			'store_thumb' => $store_thumbnail,
 			'store_features' => $features
 		);
 	}

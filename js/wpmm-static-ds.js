@@ -77,6 +77,7 @@ jQuery.each(rows, function(i, row){
     var store = new storeLocator.Store(row.id, position,featureSet ,{
         title: row.store_name,
         address: row.address,
+        thumb: row.store_thumb,
         link: row.store_permalink,
         icon: row.store_marker
     });

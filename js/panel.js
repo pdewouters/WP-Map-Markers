@@ -48,7 +48,7 @@ google.maps.event.addDomListener(window, 'load', function() {
 
     var html = ['<div class="store"><div class="title">', details.title,
       '</div><div class="address">', details.address, '</div>',
-      '<div class="permalink misc">', details.store_permalink, '</div></div>'].join('');
+      '<div class="permalink misc"><a href="', details.link, '">view details</a></div><div class="thumb">', details.thumb , '</div>'].join('');
 
     infoBubble.setContent(jQuery(html)[0]);
     return infoBubble;
