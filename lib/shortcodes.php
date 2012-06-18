@@ -1,6 +1,6 @@
 <?php
 
-function wpmm_do_main_map( $attr ) {
+function wpmm_do_display_map( $attr ) {
 	global $wp_query;
 	$options = get_option( 'wpmm_plugin_map_options' );
 	// don't display maps on archive pages because multiple maps don't work
@@ -13,13 +13,17 @@ function wpmm_do_main_map( $attr ) {
 		// get map coordinates
 		$term = get_term_by( 'slug', $attr['map'], 'wpmm_map' );
 		$term_id = $term->term_id;
+		
 		$lat = get_tax_meta( $term_id, 'wpmm_map_tax_default_lat' );
 		$lng = get_tax_meta( $term_id, 'wpmm_map_tax_default_lng' );
+		
 		if ( $lat == '' || $lng == '' ) {
 			// map coordinates not set, so set default
 			$lat = $options['default_latitude'];
 			$lng = $options['default_longitude'];
 		}
+		
+		// load front end scripts only when shortcode is present
 		wp_enqueue_script( 'maps-api-js', 'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places' );
 
 		wp_enqueue_script( 'infobubble-js', 'http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobubble/src/infobubble-compiled.js', array( 'jquery', 'maps-api-js' ) );
@@ -45,11 +49,12 @@ function wpmm_do_main_map( $attr ) {
 			'lat' => $lat,
 			'lng' => $lng
 		) );
+		
 		// Loads the Store Locator default CSS styles
 		wp_enqueue_style( 'store-locator-style-css', WPMM_URL . 'css/storelocator.css' );
 
 		return '<div id="wpmm-container"><div id="panel"></div><div id="map-canvas"></div></div>';
 	} else {
-		return __( 'No locations found', 'wpmm' );
+		return __( 'No locations found', 'wpmm-map-markers' );
 	}
 }

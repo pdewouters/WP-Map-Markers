@@ -1,0 +1,372 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Map markers v0.9\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2012-06-18 23:50:59+0000\n"
+"Last-Translator: admin <paul@wpconsult.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: BELGIUM\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: lib/Tax-meta-class/Tax-meta-class.php:250
+#@ default
+msgid "Delete this image"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:250
+#: lib/Tax-meta-class/Tax-meta-class.php:864
+#@ default
+msgid "Delete"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:350
+#@ default
+msgid "Cannot delete file. Something's wrong."
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:570
+#: lib/Tax-meta-class/Tax-meta-class.php:613
+#@ default
+msgid "Remove"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:583
+#@ default
+msgid "Add"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:860
+#@ default
+msgid "Uploaded files"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:871
+#@ default
+msgid "Upload new files"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:877
+#@ default
+msgid "Add more files"
+msgstr ""
+
+#: lib/Tax-meta-class/Tax-meta-class.php:929
+#@ default
+msgid "Select a color"
+msgstr ""
+
+#: lib/admin.php:28
+#@ wpmm-map-markers
+msgid "Default map center"
+msgstr "Centre de la carte par défaut"
+
+#: lib/admin.php:33
+#@ wpmm-map-markers
+msgid "Enter the default map center."
+msgstr "Saisissez le centre de la carte par défaut"
+
+#: lib/admin.php:38
+#@ wpmm-map-markers
+msgid "Default latitude"
+msgstr "Latitude par défaut"
+
+#: lib/admin.php:43
+#@ wpmm-map-markers
+msgid "Define the default latitude."
+msgstr "Définir la latitude par défaut."
+
+#: lib/admin.php:48
+#@ wpmm-map-markers
+msgid "Default longitude"
+msgstr "Latitude par défaut"
+
+#: lib/admin.php:49
+#@ wpmm-map-markers
+msgid "Define the default longitude."
+msgstr "Définir la latitude par défaut"
+
+#: lib/admin.php:54
+#@ wpmm-map-markers
+msgid "Default zoom"
+msgstr "Zoom par défaut"
+
+#: lib/admin.php:55
+#@ wpmm-map-markers
+msgid "Define the default zoom."
+msgstr "Dédinir le zoom par défaut"
+
+#: lib/admin.php:60
+#@ wpmm-map-markers
+msgid "Map Type"
+msgstr "Type de carte"
+
+#: lib/admin.php:61
+#@ wpmm-map-markers
+msgid "Choose the map type."
+msgstr "Choisir le type de carte."
+
+#: lib/admin.php:84
+#@ wpmm-map-markers
+msgid "Set the Google maps defaults."
+msgstr "Définir les règlages Google maps par défaut"
+
+#: lib/admin.php:205
+#@ wpmm-map-markers
+msgid "Map Markers Options"
+msgstr "Options de WP Map Markers"
+
+#: lib/post-types.php:9
+#@ default
+msgctxt "post type general name"
+msgid "Locations"
+msgstr ""
+
+#: lib/post-types.php:10
+#@ default
+msgctxt "post type singular name"
+msgid "Location"
+msgstr ""
+
+#: lib/post-types.php:11
+#@ default
+msgctxt "wpmm-map-markers"
+msgid "Add New"
+msgstr ""
+
+#: lib/post-types.php:12
+#@ wpmm-map-markers
+msgid "Add New Location"
+msgstr "Ajouter un endroit"
+
+#: lib/post-types.php:13
+#@ wpmm-map-markers
+msgid "Edit Location"
+msgstr "Modifier Endroit"
+
+#: lib/post-types.php:14
+#@ wpmm-map-markers
+msgid "New Location"
+msgstr "Nouvel endroit"
+
+#: lib/post-types.php:15
+#@ wpmm-map-markers
+msgid "View Location"
+msgstr "Voir Endroit"
+
+#: lib/post-types.php:16
+#@ wpmm-map-markers
+msgid "Search Locations"
+msgstr "Chercher Endroits"
+
+#: lib/post-types.php:17
+#: lib/shortcodes.php:58
+#@ wpmm-map-markers
+msgid "No locations found"
+msgstr "Aucun endroit trouvé"
+
+#: lib/post-types.php:18
+#@ wpmm-map-markers
+msgid "No locations found in Trash"
+msgstr "Aucun endroit trouvé dans la corbeille"
+
+#: lib/post-types.php:19
+#@ wpmm-map-markers
+msgid "Parent Locations:"
+msgstr "Endroits parents:"
+
+#: lib/post-types.php:20
+#@ wpmm-map-markers
+msgid "Locations"
+msgstr "Endroits"
+
+#: lib/taxonomies.php:8
+#@ wpmm-map-markers
+msgctxt "Features general name"
+msgid "Features"
+msgstr "Caracteristiques"
+
+#: lib/taxonomies.php:9
+#@ wpmm-map-markers
+msgctxt "Features singular name"
+msgid "Features"
+msgstr "Caracteristiques"
+
+#: lib/taxonomies.php:10
+#@ wpmm-map-markers
+msgid "Search Features"
+msgstr "Rechercher Caracteristiques"
+
+#: lib/taxonomies.php:11
+#@ wpmm-map-markers
+msgid "Popular Features"
+msgstr "Caracteristiques populaires"
+
+#: lib/taxonomies.php:12
+#@ wpmm-map-markers
+msgid "All Features"
+msgstr "Toutes les caracteristiques"
+
+#: lib/taxonomies.php:13
+#@ wpmm-map-markers
+msgid "Parent Feature"
+msgstr "Caracteristique parent"
+
+#: lib/taxonomies.php:14
+#@ wpmm-map-markers
+msgid "Parent Feature:"
+msgstr "Caracteristique parent:"
+
+#: lib/taxonomies.php:15
+#@ wpmm-map-markers
+msgid "Edit Feature"
+msgstr "Modifier caracteristique"
+
+#: lib/taxonomies.php:16
+#@ wpmm-map-markers
+msgid "Update Feature"
+msgstr "Mettre à jour caracteristique"
+
+#: lib/taxonomies.php:17
+#@ wpmm-map-markers
+msgid "Add New Feature"
+msgstr "Ajouter caracteristique"
+
+#: lib/taxonomies.php:18
+#@ wpmm-map-markers
+msgid "New Feature"
+msgstr "Nouvelle caracteristique"
+
+#: lib/taxonomies.php:19
+#@ wpmm-map-markers
+msgid "Separate Features with commas"
+msgstr "Séparaer les caracteristiques par des virgules"
+
+#: lib/taxonomies.php:20
+#@ wpmm-map-markers
+msgid "Add or remove Features"
+msgstr "Ajouter ou supprimer des carateristiques"
+
+#: lib/taxonomies.php:21
+#@ wpmm-map-markers
+msgid "Choose from the most used Features"
+msgstr "Choisir parmi les carateristiques les plus utilisées"
+
+#: lib/taxonomies.php:22
+#@ wpmm-map-markers
+msgid "Feature"
+msgstr "Caracteristique"
+
+#: lib/taxonomies.php:44
+#@ wpmm-map-markers
+msgctxt "Maps general name"
+msgid "Maps"
+msgstr "Cartes"
+
+#: lib/taxonomies.php:45
+#@ wpmm-map-markers
+msgctxt "Map singular name"
+msgid "Map"
+msgstr "Carte"
+
+#: lib/taxonomies.php:46
+#@ wpmm-map-markers
+msgid "Search Maps"
+msgstr "Rechercher cartes"
+
+#: lib/taxonomies.php:47
+#@ wpmm-map-markers
+msgid "Popular Maps"
+msgstr "Cartes populaires"
+
+#: lib/taxonomies.php:48
+#@ wpmm-map-markers
+msgid "All Maps"
+msgstr "Toutes les cartes"
+
+#: lib/taxonomies.php:49
+#@ wpmm-map-markers
+msgid "Parent Map"
+msgstr "Carte parent"
+
+#: lib/taxonomies.php:50
+#@ wpmm-map-markers
+msgid "Parent Map:"
+msgstr "Carte parent:"
+
+#: lib/taxonomies.php:51
+#@ wpmm-map-markers
+msgid "Edit Map"
+msgstr "Modifier la carte"
+
+#: lib/taxonomies.php:52
+#@ wpmm-map-markers
+msgid "Update Map"
+msgstr "Metter à jour la carte"
+
+#: lib/taxonomies.php:53
+#@ wpmm-map-markers
+msgid "Add New Map"
+msgstr "Ajouter nouvelle carte"
+
+#: lib/taxonomies.php:54
+#@ wpmm-map-markers
+msgid "New Map"
+msgstr "Nouvelle carte"
+
+#: lib/taxonomies.php:55
+#@ wpmm-map-markers
+msgid "Separate Maps with commas"
+msgstr "Séparer les cartes par des virgules"
+
+#: lib/taxonomies.php:56
+#@ wpmm-map-markers
+msgid "Add or remove Maps"
+msgstr "Ajouter ou supprimer des cartes"
+
+#: lib/taxonomies.php:57
+#@ wpmm-map-markers
+msgid "Choose from the most used Maps"
+msgstr "Choisissez parmi les cartes les plus utilisées"
+
+#: lib/taxonomies.php:58
+#@ wpmm-map-markers
+msgid "Maps"
+msgstr "Cartes"
+
+#: lib/wpmm-location-geocode-metabox.php:8
+#@ wpmm
+msgid "Address"
+msgstr ""
+
+#: lib/wpmm-location-geocode-metabox.php:16
+#@ wpmm-map-markers
+msgid "Please fill out the information below"
+msgstr "Veuillez fournir les informations suivantes"
+
+#: lib/wpmm-location-geocode-metabox.php:19
+#@ wpmm-map-markers
+msgid "Address:"
+msgstr "Adresse:"
+
+#: lib/admin.php:20
+#: lib/admin.php:186
+#@ wpmm-map-markers
+msgid "WP Map Markers Options"
+msgstr "Options de WP Map Markers"
+
+#: lib/admin.php:187
+#@ wpmm-map-markers
+msgid "WP Map Markers"
+msgstr "WP Map Markers"
+

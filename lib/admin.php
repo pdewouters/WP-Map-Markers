@@ -17,48 +17,48 @@ function wpmm_initialize_plugin_options() {
 	// First, we register a section. This is necessary since all future options must belong to one.
 	add_settings_section(
 			'general_settings_section', // ID used to identify this section and with which to register options
-			__( 'Map marker Options', 'map-markers' ), // Title to be displayed on the administration page
+			__( 'WP Map Markers Options', 'wpmm-map-markers' ), // Title to be displayed on the administration page
 			'wpmm_general_options_callback', // Callback used to render the description of the section
-			'wpmm_plugin_map_options'	// Page on which to add this section of options
+			'wpmm_plugin_map_options' // Page on which to add this section of options
 	);
 
 	// Next, we will introduce the fields
 	add_settings_field(
 			'default_mapcenter', // ID used to identify the field throughout the plugin
-			__( 'Default map center', 'map-markers' ), // The label to the left of the option interface element
+			__( 'Default map center', 'wpmm-map-markers' ), // The label to the left of the option interface element
 			'wpmm_default_mapcenter_callback', // The name of the function responsible for rendering the option interface
 			'wpmm_plugin_map_options', // The page on which this option will be displayed
 			'general_settings_section', // The name of the section to which this field belongs
 			array( // The array of arguments to pass to the callback. In this case, just a description.
-		__( 'Enter the default map center.', 'map-markers' )
+		__( 'Enter the default map center.', 'wpmm-map-markers' )
 			)
 	);
 	add_settings_field(
 			'default_latitude', // ID used to identify the field throughout the plugin
-			__( 'Default latitude', 'map-markers' ), // The label to the left of the option interface element
+			__( 'Default latitude', 'wpmm-map-markers' ), // The label to the left of the option interface element
 			'wpmm_default_latitude_callback', // The name of the function responsible for rendering the option interface
 			'wpmm_plugin_map_options', // The page on which this option will be displayed
 			'general_settings_section', // The name of the section to which this field belongs
 			array( // The array of arguments to pass to the callback. In this case, just a description.
-		__( 'Define the default latitude.', 'map-markers' )
+		__( 'Define the default latitude.', 'wpmm-map-markers' )
 			)
 	);
 
 	add_settings_field(
-			'default_longitude', __( 'Default longitude', 'map-markers' ), 'wpmm_default_longitude_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
-		__( 'Define the default longitude.', 'map-markers' )
+			'default_longitude', __( 'Default longitude', 'wpmm-map-markers' ), 'wpmm_default_longitude_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
+		__( 'Define the default longitude.', 'wpmm-map-markers' )
 			)
 	);
 
 	add_settings_field(
-			'default_zoom', __( 'Default zoom', 'map-markers' ), 'wpmm_default_zoom_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
-		__( 'Define the default zoom.', 'map-markers' )
+			'default_zoom', __( 'Default zoom', 'wpmm-map-markers' ), 'wpmm_default_zoom_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
+		__( 'Define the default zoom.', 'wpmm-map-markers' )
 			)
 	);
 
 	add_settings_field(
-			'map_type', __( 'Map Type', 'map-markers' ), 'wpmm_map_type_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
-		__( 'Choose the map type.', 'map-markers' )
+			'map_type', __( 'Map Type', 'wpmm-map-markers' ), 'wpmm_map_type_callback', 'wpmm_plugin_map_options', 'general_settings_section', array(
+		__( 'Choose the map type.', 'wpmm-map-markers' )
 			)
 	);
 
@@ -81,7 +81,7 @@ function wpmm_initialize_plugin_options() {
  * in the add_settings_section function.
  */
 function wpmm_general_options_callback() {
-	echo '<p>' . __( 'Set the Google maps defaults.', 'map-markers' ) . '</p>';
+	echo '<p>' . __( 'Set the Google maps defaults.', 'wpmm-map-markers' ) . '</p>';
 }
 
 // end wpmm_general_options_callback
@@ -183,8 +183,8 @@ function wpmm_create_menu_page() {
 		add_option( 'wpmm_plugin_map_options', wpmm_get_default_settings(), '', 'yes' );
 
 	$wpmm_settings_page = add_options_page(
-			__( 'Map Markers Options', 'map-markers' ), // The title to be displayed on the corresponding page for this menu
-			__( 'Map Markers', 'map-markers' ), // The text to be displayed for this actual menu item
+			__( 'WP Map Markers Options', 'wpmm-map-markers' ), // The title to be displayed on the corresponding page for this menu
+			__( 'WP Map Markers', 'wpmm-map-markers' ), // The text to be displayed for this actual menu item
 			'wpmm_unique_capability', // Which type of users can see this menu
 			'wpmm-settings', // The unique ID - that is, the slug - for this menu item
 			'wpmm_plugin_display', // The name of the function to call when rendering the menu for this page
@@ -202,25 +202,25 @@ function wpmm_plugin_display() {
 
 		<!-- Add the icon to the page -->
 		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php _e( 'Map Markers Options', 'map-markers' ); ?></h2>
+		<h2><?php _e( 'Map Markers Options', 'wpmm-map-markers' ); ?></h2>
 
 		<!-- Make a call to the WordPress function for rendering errors when settings are saved. -->
-	<?php settings_errors(); ?>
+		<?php settings_errors(); ?>
 
 		<!-- Create the form that will be used to render our options -->
 		<form method="post" action="options.php">
-	<?php settings_fields( 'wpmm_plugin_map_options' ); ?>
+			<?php settings_fields( 'wpmm_plugin_map_options' ); ?>
 			<?php do_settings_sections( 'wpmm_plugin_map_options' ); ?>
 			<?php submit_button(); ?>
 		</form>
 
-	<form id="wpmm-form-settings" action="" method="POST">
-		<div>
-			<input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" />
-			<img src="<?php echo admin_url( '/images/wpspin_light.gif' ); ?>" class="waiting" id="wpmm_loading" style="display:none;"/>
-		</div>
-	</form>
-	<div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>
+		<form id="wpmm-form-settings" action="" method="POST">
+			<div>
+				<input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" />
+				<img src="<?php echo admin_url( '/images/wpspin_light.gif' ); ?>" class="waiting" id="wpmm_loading" style="display:none;"/>
+			</div>
+		</form>
+		<div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>
 
 
 	</div><!-- /.wrap -->

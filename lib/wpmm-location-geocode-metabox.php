@@ -13,9 +13,12 @@ function wpmm_mbe_function( $post ) {
 	//retrieve the meta data values if they exist
 	$wpmm_mbe_address = get_post_meta( $post->ID, '_wpmm_mbe_address', true );
 
-	echo 'Please fill out the information below';
+	_e( 'Please fill out the information below', 'wpmm-map-markers' );
 	?>
-	<p>Address: <input type="text" class="widefat" id="wpmm_mbe_address" name="wpmm_mbe_address" value="<?php echo esc_attr( $wpmm_mbe_address ); ?>" /></p>
+	<p>
+		<?php _e( 'Address:', 'wpmm-map-markers' ); ?> 
+		<input type="text" class="widefat" id="wpmm_mbe_address" name="wpmm_mbe_address" value="<?php echo esc_attr( $wpmm_mbe_address ); ?>" />
+	</p>
 	<form id="wpmm-form" action="" method="POST">
 		<div>
 			<input id="wpmm_geocode_button" class="button" type="button" value="Geocode address" />
@@ -48,28 +51,27 @@ function wpmm_process_ajax() {
 
 	// clicking geocode address calls the click event on the button in 
 	// display-map.js which makes the address available to this function for processing
-	
+
 	if ( isset( $_POST['wpmm_address'] ) )
-		$new_address = $_POST['wpmm_address'];
+		$new_address = strip_tags( $_POST['wpmm_address'] );
 	if ( isset( $_POST['wpmm_current_address'] ) )
-		$current_address = $_POST['wpmm_current_address'];
+		$current_address = strip_tags( $_POST['wpmm_current_address'] );
 	if ( isset( $_POST['wpmm_address_field'] ) )
-		$address_field = $_POST['wpmm_address_field'];
+		$address_field = strip_tags( $_POST['wpmm_address_field'] );
 
-	if($address_field != ''){
-	if ( $new_address != $current_address ) {
-		// address field value changed so process
-		$lat_lng = wpmm_do_geocode_address( $new_address );
-		$response = array( 'changed' => true, 'lat_lng' => $lat_lng );
-	} else {
-		$response = array( 'changed' => false, 'lat_lng' => '' );
-	}
-
+	if ( $address_field != '' ) {
+		if ( $new_address != $current_address ) {
+			// address field value changed so process
+			$lat_lng = wpmm_do_geocode_address( $new_address );
+			$response = array( 'changed' => true, 'lat_lng' => $lat_lng );
+		} else {
+			$response = array( 'changed' => false, 'lat_lng' => '' );
+		}
 	} else {
 		// address field is still empty so put a default val
 	}
-	
-	echo json_encode($response);
+
+	echo json_encode( $response );
 	die();
 }
 

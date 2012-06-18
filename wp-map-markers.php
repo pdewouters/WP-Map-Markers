@@ -70,7 +70,7 @@ function wpmm_plugin_setup() {
 	if ( is_admin() ) {
 
 		/* Load translations. */
-		load_plugin_textdomain( 'map-markers', false, 'wp-map-markers/languages' );
+		load_plugin_textdomain( 'wpmm-map-markers', false, 'wp-map-markers/languages' );
 
 		/* Load the plugin's admin file. */
 		require_once WPMM_DIR . '/lib/admin.php';
@@ -79,24 +79,28 @@ function wpmm_plugin_setup() {
 
 	add_action( 'admin_enqueue_scripts', 'wpmm_enqueue_scripts' );
 
-	add_shortcode( 'wpmm_map', 'wpmm_do_main_map' );
+	add_shortcode( 'wpmm_map', 'wpmm_do_display_map' );
 }
 
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
-
-	$marker_vars = wpmm_get_initial_marker_location( $hook );
-	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
-	wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
-	wp_localize_script( 'display-map', 'wpmm_vars', array(
-		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
-		'wpmm_post_id' => $marker_vars['post_id'],
-		'lat' => $marker_vars['latitude'],
-		'lng' => $marker_vars['longitude'],
-		'current_address' => $marker_vars['current_address'],
-		'address_field' => $marker_vars['address_field']
-			)
-	);
+	global $post_type;
+	
+	// only load scripts when necessary
+	if ( $hook == 'settings_page_wpmm-settings' || (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
+		$marker_vars = wpmm_get_initial_marker_location( $hook );
+		wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
+		wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
+		wp_localize_script( 'display-map', 'wpmm_vars', array(
+			'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
+			'wpmm_post_id' => $marker_vars['post_id'],
+			'lat' => $marker_vars['latitude'],
+			'lng' => $marker_vars['longitude'],
+			'current_address' => $marker_vars['current_address'],
+			'address_field' => $marker_vars['address_field']
+				)
+		);
+	}
 }
 
 // This function gets the stores from the database
@@ -130,7 +134,7 @@ function wpmm_fetch_stores( $map ) {
 
 	if ( !$locations )
 		return;
-	
+
 
 	// fetch posts custom meta fields vaules
 	foreach ( $locations as $location ) {
