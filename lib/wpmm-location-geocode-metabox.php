@@ -39,40 +39,48 @@ function wpmm_mbe_save_meta( $post_id ) {
 	}
 }
 
-function wpmm_load_scripts( $hook ) {
-	//global $post;
-	//$post_type = get_current_screen()->id; // when on post.php or post-new.php
-	//if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
-	//	return;
-	//wp_enqueue_script( 'maps-api-js', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
-	//wp_enqueue_script( 'wpmm-ajax', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/wpmm-ajax.js', array( 'jquery' ) );
-	//wp_localize_script( 'wpmm-ajax', 'wpmm_vars', array(
-	//	'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
-	//	'wpmm_post_id' => $post->ID
-	//		)
-	//);
-}
-
-//add_action( 'admin_enqueue_scripts', 'wpmm_load_scripts' );
-
 function wpmm_process_ajax() {
-
-	if (  !isset( $_POST['wpmm_nonce'] ) || !wp_verify_nonce( $_POST['wpmm_nonce'], 'wpmm-nonce' ) )
+	//$lat_lng = '';
+	// Geocode button was clicked
+	// verify the nonce field
+	if ( !isset( $_POST['wpmm_nonce'] ) || !wp_verify_nonce( $_POST['wpmm_nonce'], 'wpmm-nonce' ) )
 		die( 'Permissions check failed' );
 
-	if(isset($_POST['wpmm_address'])){
-		if ( get_post_meta( $_POST['wpmm_post_id'], '_wpmm_latitude' ) ) {
-			$lat_long = array(
-				'latitude' => get_post_meta( $_POST['wpmm_post_id'], '_wpmm_latitude' ),
-				'longitude' => get_post_meta( $_POST['wpmm_post_id'], '_wpmm_longitude' )
-			);
+	// clicking geocode address calls the click event on the button in 
+	// display-map.js which makes the address available to this function for processing
+	if ( isset( $_POST['wpmm_address'] ) ) {
+		$new_address = $_POST['wpmm_address'];
+		if ( $_POST['wpmm_post_id'] != '' ) {
+			$post_id = $_POST['wpmm_post_id'];
+			// location edit screen
+			// if address has changed, calculate new marker location
+			$current_address = get_post_meta( $_POST['wpmm_post_id'], '_wpmm_mbe_address', true );
+			if ( $current_address != $new_address ) {
+
+				$lat_lng = do_geocode_address( $_POST['wpmm_address'] );
+			} else {
+				//send changed false
+				$response = array( 'changed' => false, 'lat_lng' => '' );
+			}
 		} else {
-			$lat_lng = do_geocode_address( $_POST['wpmm_address'], $_POST['wpmm_post_id'] );
+			// settings page
+			$options = get_option( 'wpmm_plugin_map_options' );
+
+			// If POST address is different from current
+			if ( $new_address != $options['default_mapcenter'] ) {
+				$lat_lng = do_geocode_address( $_POST['wpmm_address'] );
+				$response = array( 'changed' => true, 'lat_lng' => $lat_lng );
+			} else {
+				//send changed false
+				$response = array( 'changed' => false, 'lat_lng' => '' );
+			}
 		}
-		echo json_encode( $lat_lng );
+
+		// send coordinates to ajax function (response)
+		echo json_encode( $response );
 	}
-	
-	
+
+
 	die();
 }
 
@@ -97,10 +105,10 @@ function do_geocode_address( $address ) {
 	// decode the JSON object 
 	// return an array with lat / long
 	$json = json_decode( $json );
-	$lat_long = array(
+	$lat_lng = array(
 		'latitude' => $json->results[0]->geometry->location->lat,
 		'longitude' => $json->results[0]->geometry->location->lng
 	);
 
-	return $lat_long;
+	return $lat_lng;
 }

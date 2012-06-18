@@ -61,7 +61,7 @@ function wpmm_plugin_setup() {
 
 	/* Set constant path to the WPMM plugin URL. */
 	define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
-		require_once WPMM_DIR . '/lib/map-taxo-meta.php';
+	require_once WPMM_DIR . '/lib/map-taxo-meta.php';
 	require_once WPMM_DIR . '/lib/wpmm-location-geocode-metabox.php';
 	require_once WPMM_DIR . '/lib/post-types.php';
 	require_once WPMM_DIR . '/lib/taxonomies.php';
@@ -87,32 +87,30 @@ function wpmm_plugin_setup() {
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
 	global $wpmm_settings_page;
-	
+
 	$is_settings_page = false;
 	$post_type = get_current_screen()->id; // when on post.php or post-new.php
 	$options = get_option( 'wpmm_plugin_map_options' );
-	
-	
+
+
 	if ( $hook == 'settings_page_wpmm-settings' ) {
 		// WPMM settings page
 		$is_settings_page = true;
 	} elseif ( (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
 		global $post;
 
-		if ( get_post_meta( $post->ID, '_wpmm_latitude' ) ) {
-			$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
+		// set map center from location address
+		if ( get_post_meta( $post->ID, '_wpmm_latitude', true ) && get_post_meta( $post->ID, '_wpmm_longitude', true ) ) {
+			// already has address
+			$lat = get_post_meta( $post->ID, '_wpmm_latitude', true );
+			$lng = get_post_meta( $post->ID, '_wpmm_longitude', true );
 		} else {
-
+			// no address set, get map center from global settings
 			if ( $options['default_latitude'] ) {
 				$lat = sanitize_text_field( $options['default_latitude'] );
 			} else {
 				$lat = 38.898748;
 			}
-		}
-
-		if ( get_post_meta( $post->ID, '_wpmm_longitude' ) )
-			$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
-		else {
 			if ( $options['default_longitude'] ) {
 				$lng = sanitize_text_field( $options['default_longitude'] );
 			} else {
@@ -122,6 +120,7 @@ function wpmm_enqueue_scripts( $hook ) {
 	} else {
 		return;
 	}
+
 
 	if ( $is_settings_page ) {
 		$post_id = '';
@@ -139,7 +138,8 @@ function wpmm_enqueue_scripts( $hook ) {
 	} else {
 		$post_id = $post->ID;
 	}
-	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
+	//wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
+	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
 	wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
 	wp_localize_script( 'display-map', 'wpmm_vars', array(
 		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
@@ -224,5 +224,4 @@ function wpmm_get_all_features() {
 	//returns all terms fron the taxonomy features
 	$features = get_terms( 'wpmm_feature' );
 	return $features;
-
 }
