@@ -1,9 +1,14 @@
 <?php
 
-function wpmm_do_main_map() {
+function wpmm_do_main_map( $attr ) {
+	global $wp_query;
+	//echo '<pre>' . var_dump($wp_query) . '</pre>';
+	if ( ! isset( $attr['map'] ) ||  is_home() || is_archive() )
+		return;
 
-	// make stored stores available to map script
-	$stores = json_encode( wpmm_fetch_stores() );
+	$stores = json_encode( wpmm_fetch_stores( $attr['map'] ) );
+	
+	// don't display maps on archive pages because multiple maps don't work
 	if ( 'null' != $stores ) {
 		// Load the maps API
 		// http://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&sensor=SET_TO_TRUE_OR_FALSE
@@ -22,8 +27,9 @@ function wpmm_do_main_map() {
 		wp_localize_script( 'data-feed-js', 'wpmm_features', $wpmm_all_features );
 		// Loads the panel script
 		wp_enqueue_script( 'panel-js', WPMM_URL . 'js/panel.js', array( 'jquery', 'store-locator-js', 'maps-api-js', 'infobubble-js' ) );
+		$options = get_option( 'wpmm_plugin_map_options' );
 
-		$wpmm_settings = json_encode( wpmm_global_settings() );
+		$wpmm_settings = json_encode( $options );
 		wp_localize_script( 'panel-js', 'wpmm_settings', $wpmm_settings );
 
 		// Loads the Store Locator default CSS styles

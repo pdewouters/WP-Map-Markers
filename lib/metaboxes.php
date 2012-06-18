@@ -39,7 +39,9 @@ function cmb_wpmm_metaboxes( array $meta_boxes ) {
 				'name' => 'Dsiplay on map',
 				'desc' => 'check to display this location on the global map',
 				'id' => $prefix . 'displayonmap',
+				'std' => true,
 				'type' => 'checkbox',
+				
 			),
 			array(
 				'name' => 'Latitude',
@@ -66,6 +68,7 @@ function cmb_wpmm_metaboxes( array $meta_boxes ) {
 					array( 'name' => 'Red', 'value' => 'red-marker', ),
 					array( 'name' => 'Pink', 'value' => 'pink-marker', ),
 				),
+				'std' => 'blue-marker'
 			),
 		),
 	);

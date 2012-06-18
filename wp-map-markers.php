@@ -55,7 +55,7 @@ add_action( 'plugins_loaded', 'wpmm_plugin_setup' );
 // Initialize plugin
 function wpmm_plugin_setup() {
 
-	add_image_size('store-thumb', 50, 50, true);
+	add_image_size( 'store-thumb', 50, 50, true );
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -66,7 +66,7 @@ function wpmm_plugin_setup() {
 	require_once WPMM_DIR . '/lib/taxonomies.php';
 	require_once WPMM_DIR . '/lib/metaboxes.php';
 	require_once WPMM_DIR . '/lib/shortcodes.php';
-
+	require_once WPMM_DIR . '/lib/map-taxo-meta.php';
 
 	if ( is_admin() ) {
 
@@ -85,41 +85,64 @@ function wpmm_plugin_setup() {
 
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
+	global $wpmm_settings_page;
+	
+	$is_settings_page = false;
 	$post_type = get_current_screen()->id; // when on post.php or post-new.php
-
-	if ( ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
-		return;
-
-	global $post;
 	$options = get_option( 'wpmm_plugin_map_options' );
-	if ( get_post_meta( $post->ID, '_wpmm_latitude' ) ) {
-		$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
+	
+	
+	if ( $hook == 'settings_page_wpmm-settings' ) {
+		// WPMM settings page
+		$is_settings_page = true;
+	} elseif ( (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
+		global $post;
+
+		if ( get_post_meta( $post->ID, '_wpmm_latitude' ) ) {
+			$lat = get_post_meta( $post->ID, '_wpmm_latitude' );
+		} else {
+
+			if ( $options['default_latitude'] ) {
+				$lat = sanitize_text_field( $options['default_latitude'] );
+			} else {
+				$lat = 38.898748;
+			}
+		}
+
+		if ( get_post_meta( $post->ID, '_wpmm_longitude' ) )
+			$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
+		else {
+			if ( $options['default_longitude'] ) {
+				$lng = sanitize_text_field( $options['default_longitude'] );
+			} else {
+				$lng = -77.037684;
+			}
+		}
 	} else {
+		return;
+	}
+
+	if ( $is_settings_page ) {
+		$post_id = '';
 
 		if ( $options['default_latitude'] ) {
 			$lat = sanitize_text_field( $options['default_latitude'] );
 		} else {
 			$lat = 38.898748;
 		}
-	}
-
-	if ( get_post_meta( $post->ID, '_wpmm_longitude' ) )
-		$lng = get_post_meta( $post->ID, '_wpmm_longitude' );
-	else {
 		if ( $options['default_longitude'] ) {
 			$lng = sanitize_text_field( $options['default_longitude'] );
 		} else {
 			$lng = -77.037684;
 		}
+	} else {
+		$post_id = $post->ID;
 	}
-
-
-
 	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
 	wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
 	wp_localize_script( 'display-map', 'wpmm_vars', array(
 		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
-		'wpmm_post_id' => $post->ID,
+		'wpmm_post_id' => $post_id,
 		'lat' => $lat,
 		'lng' => $lng
 			)
@@ -127,7 +150,7 @@ function wpmm_enqueue_scripts( $hook ) {
 }
 
 // This function gets the stores from the database
-function wpmm_fetch_stores() {
+function wpmm_fetch_stores( $map ) {
 
 	// fetch location posts which have a latitude, meaning geocoding works
 	$args = array(
@@ -143,6 +166,13 @@ function wpmm_fetch_stores() {
 				'key' => '_wpmm_displayonmap',
 				'value' => '',
 				'compare' => '!='
+			),
+		),
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'wpmm_map',
+				'field' => 'slug',
+				'terms' => $map
 			)
 		)
 	);
@@ -162,10 +192,10 @@ function wpmm_fetch_stores() {
 		$store_marker = WPMM_URL . '/images/' . get_post_meta( $location->ID, '_wpmm_marker_icon', true ) . '.png';
 		$store_permalink = get_permalink( $location->ID );
 		$store_thumbnail = '';
-		if(  has_post_thumbnail( $location->ID )){
-			$store_thumbnail = get_the_post_thumbnail($location->ID, 'store-thumb');
+		if ( has_post_thumbnail( $location->ID ) ) {
+			$store_thumbnail = get_the_post_thumbnail( $location->ID, 'store-thumb' );
 		}
-		
+
 		$stores[] = array(
 			'id' => $store_id,
 			'store_name' => $store_name,
@@ -182,42 +212,6 @@ function wpmm_fetch_stores() {
 	return $stores;
 }
 
-function wpmm_global_settings() {
-	$options = get_option( 'wpmm_plugin_map_options' );
-	//print_r($options);die();
-	// TODO fetch this from settings page
-	//$marker_icon = WPMM_URL . 'images/blue-marker.png';
-	$marker_shadow = WPMM_URL . 'images/marker-shadow.png';
-
-	if ( $options['default_zoom'] )
-		$default_zoom = sanitize_text_field( $options['default_zoom'] );
-	else
-		$default_zoom = 8;
-	if ( $options['default_latitude'] )
-		$map_center_lat = sanitize_text_field( $options['default_latitude'] );
-	else
-		$map_center_lat = 38.8978881835938;
-	if ( $options['default_longitude'] )
-		$map_center_lng = sanitize_text_field( $options['default_longitude'] );
-	else
-		$map_center_lng = -77.0363311767578;
-
-	if ( $options['map_type'] )
-		$map_type = sanitize_text_field( $options['map_type'] );
-	else
-		$map_type = 'google.maps.MapTypeId.ROADMAP';
-
-
-	$wpmm_settings[] = array(
-		'marker_shadow' => $marker_shadow,
-		'default_zoom' => $default_zoom,
-		'map_center_lat' => $map_center_lat,
-		'map_center_lng' => $map_center_lng,
-		'map_type' => 'google.maps.MapTypeId.' . strtoupper( $map_type )
-	);
-	return $wpmm_settings;
-}
-
 function wpmm_get_location_features( $post ) {
 	//Returns Array of Term Names for "my_term"
 	$term_list = wp_get_post_terms( $post->ID, 'wpmm_feature', array( "fields" => "all" ) );
@@ -229,5 +223,5 @@ function wpmm_get_all_features() {
 	//returns all terms fron the taxonomy features
 	$features = get_terms( 'wpmm_feature' );
 	return $features;
-	//print_r($features);die();
+
 }

@@ -9,7 +9,6 @@
  *
  * This function is registered with the 'admin_init' hook.
  */
-
 add_action( 'admin_init', 'wpmm_initialize_plugin_options' );
 
 function wpmm_initialize_plugin_options() {
@@ -21,10 +20,20 @@ function wpmm_initialize_plugin_options() {
 			'general_settings_section', // ID used to identify this section and with which to register options
 			__( 'Map marker Options', 'map-markers' ), // Title to be displayed on the administration page
 			'wpmm_general_options_callback', // Callback used to render the description of the section
-			'wpmm_plugin_map_options'	   // Page on which to add this section of options
+			'wpmm_plugin_map_options'	// Page on which to add this section of options
 	);
 
-	// Next, we will introduce the fields for toggling the visibility of content elements.
+	// Next, we will introduce the fields
+	add_settings_field(
+			'default_mapcenter', // ID used to identify the field throughout the plugin
+			__( 'Default map center', 'map-markers' ), // The label to the left of the option interface element
+			'wpmm_default_mapcenter_callback', // The name of the function responsible for rendering the option interface
+			'wpmm_plugin_map_options', // The page on which this option will be displayed
+			'general_settings_section', // The name of the section to which this field belongs
+			array( // The array of arguments to pass to the callback. In this case, just a description.
+		__( 'Enter the default map center.', 'map-markers' )
+			)
+	);
 	add_settings_field(
 			'default_latitude', // ID used to identify the field throughout the plugin
 			__( 'Default latitude', 'map-markers' ), // The label to the left of the option interface element
@@ -83,11 +92,25 @@ function wpmm_general_options_callback() {
  * ------------------------------------------------------------------------ */
 
 /**
- * This function renders the interface elements for toggling the visibility of the header element.
+ * This function renders the interface elements
  *
  * It accepts an array of arguments and expects the first element in the array to be the description
  * to be displayed next to the checkbox.
  */
+function wpmm_default_mapcenter_callback( $args ) {
+
+	// Read the options collection
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+	$html = '<input type="text" id="wpmm_plugin_map_options[default_mapcenter]" name="wpmm_plugin_map_options[default_mapcenter]" value="' . $options['default_mapcenter'] . '" />';
+
+	// Here, we will take the first argument of the array and add it to a label next to the checkbox
+	$html .= '<label for="wpmm_plugin_map_options[default_mapcenter]"> ' . $args[0] . '</label>';
+
+	echo $html;
+}
+
 function wpmm_default_latitude_callback( $args ) {
 
 	// Read the options collection
@@ -142,10 +165,10 @@ function wpmm_map_type_callback( $args ) {
 
 	$html = '<select id="map_type" name="wpmm_plugin_map_options[map_type]">';
 	$html .= '<option value="default">Select a map type...</option>';
-	$html .= '<option value="roadmap"' . selected( $options['map_type'], 'roadmap', false ) . '>Roadmap</option>';
-	$html .= '<option value="satellite"' . selected( $options['map_type'], 'satellite', false ) . '>Satellite</option>';
-	$html .= '<option value="hybrid"' . selected( $options['map_type'], 'hybrid', false ) . '>Hybrid</option>';
-	$html .= '<option value="terrain"' . selected( $options['map_type'], 'terrain', false ) . '>Terrain</option>';
+	$html .= '<option value="google.maps.MapTypeId.ROADMAP"' . selected( $options['map_type'], 'google.maps.MapTypeId.ROADMAP', false ) . '>Roadmap</option>';
+	$html .= '<option value="google.maps.MapTypeId.SATELLITE"' . selected( $options['map_type'], 'google.maps.MapTypeId.SATELLITE', false ) . '>Satellite</option>';
+	$html .= '<option value="google.maps.MapTypeId.HYBRID"' . selected( $options['map_type'], 'google.maps.MapTypeId.HYBRID', false ) . '>Hybrid</option>';
+	$html .= '<option value="google.maps.MapTypeId.TERRAIN"' . selected( $options['map_type'], 'google.maps.MapTypeId.TERRAIN', false ) . '>Terrain</option>';
 	$html .= '</select>';
 
 	echo $html;
@@ -154,13 +177,17 @@ function wpmm_map_type_callback( $args ) {
 // end sandbox_radio_element_callback
 
 function wpmm_create_menu_page() {
-	global $wppmm_settings_page;
+	global $wpmm_settings_page;
 
-	$wppmm_settings_page = add_options_page(
+	/* If no settings are available, add the default settings to the database. */
+	if ( false === get_option( 'wpmm_plugin_map_options' ) )
+		add_option( 'wpmm_plugin_map_options', wpmm_get_default_settings(), '', 'yes' );
+
+	$wpmm_settings_page = add_options_page(
 			__( 'Map Markers Options', 'map-markers' ), // The title to be displayed on the corresponding page for this menu
 			__( 'Map Markers', 'map-markers' ), // The text to be displayed for this actual menu item
 			'wpmm_unique_capability', // Which type of users can see this menu
-			'wpmm', // The unique ID - that is, the slug - for this menu item
+			'wpmm-settings', // The unique ID - that is, the slug - for this menu item
 			'wpmm_plugin_display', // The name of the function to call when rendering the menu for this page
 			''
 	);
@@ -184,9 +211,17 @@ function wpmm_plugin_display() {
 		<!-- Create the form that will be used to render our options -->
 		<form method="post" action="options.php">
 	<?php settings_fields( 'wpmm_plugin_map_options' ); ?>
-	<?php do_settings_sections( 'wpmm_plugin_map_options' ); ?>
-	<?php submit_button(); ?>
+			<?php do_settings_sections( 'wpmm_plugin_map_options' ); ?>
+			<?php submit_button(); ?>
 		</form>
+
+	<form id="wpmm-form-settings" action="" method="POST">
+		<div>
+			<input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" />
+			<img src="<?php echo admin_url( '/images/wpspin_light.gif' ); ?>" class="waiting" id="wpmm_loading" style="display:none;"/>
+		</div>
+	</form>
+	<div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>
 
 
 	</div><!-- /.wrap -->
@@ -220,4 +255,22 @@ if ( function_exists( 'members_plugin_init' ) )
 
 function wpmm_unique_capability( $cap ) {
 	return 'edit_my_plugin_settings';
+}
+
+function wpmm_get_default_settings() {
+
+	$map_center = 'rome,italy';
+	$lat_lng_def = do_geocode_address( 'rome,italy' );
+	$map_center_lat = $lat_lng_def['latitude'];
+	$map_center_lng = $lat_lng_def['longitude'];
+
+	$wpmm_settings = array(
+		'marker_shadow' => WPMM_URL . 'images/marker-shadow.png',
+		'default_zoom' => 8,
+		'default_mapcenter' => $map_center,
+		'default_latitude' => $map_center_lat,
+		'default_longitude' => $map_center_lng,
+		'map_type' => 'google.maps.MapTypeId.ROADMAP'
+	);
+	return $wpmm_settings;
 }

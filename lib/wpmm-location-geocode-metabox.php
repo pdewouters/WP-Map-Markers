@@ -42,7 +42,6 @@ function wpmm_mbe_save_meta( $post_id ) {
 function wpmm_load_scripts( $hook ) {
 	//global $post;
 	//$post_type = get_current_screen()->id; // when on post.php or post-new.php
-
 	//if ( ($hook != 'edit.php') && ($hook != 'post.php') && ($hook != 'post-new.php') && ('wpmm_location' != $post_type) )
 	//	return;
 	//wp_enqueue_script( 'maps-api-js', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
@@ -58,13 +57,22 @@ function wpmm_load_scripts( $hook ) {
 
 function wpmm_process_ajax() {
 
-	if ( !isset( $_POST['wpmm_address'] ) || !isset( $_POST['wpmm_nonce'] ) || !wp_verify_nonce( $_POST['wpmm_nonce'], 'wpmm-nonce' ) )
+	if (  !isset( $_POST['wpmm_nonce'] ) || !wp_verify_nonce( $_POST['wpmm_nonce'], 'wpmm-nonce' ) )
 		die( 'Permissions check failed' );
 
-
-	$lat_lng = do_geocode_address( $_POST['wpmm_address'], $_POST['wpmm_post_id'] );
+	if(isset($_POST['wpmm_address'])){
+		if ( get_post_meta( $_POST['wpmm_post_id'], '_wpmm_latitude' ) ) {
+			$lat_long = array(
+				'latitude' => get_post_meta( $_POST['wpmm_post_id'], '_wpmm_latitude' ),
+				'longitude' => get_post_meta( $_POST['wpmm_post_id'], '_wpmm_longitude' )
+			);
+		} else {
+			$lat_lng = do_geocode_address( $_POST['wpmm_address'], $_POST['wpmm_post_id'] );
+		}
+		echo json_encode( $lat_lng );
+	}
 	
-	echo json_encode($lat_lng);
+	
 	die();
 }
 
@@ -73,16 +81,8 @@ add_action( 'wp_ajax_wpmm_get_results', 'wpmm_process_ajax' );
 // Geocodes an address and returns an array with long / lat
 
 
-function do_geocode_address( $address, $post_id ) {
+function do_geocode_address( $address ) {
 
-	
-	if( get_post_meta( $post_id , '_wpmm_latitude')){
-			$lat_long = array(
-		'latitude' => get_post_meta( $post_id ,'_wpmm_latitude'),
-		'longitude' => get_post_meta( $post_id ,'_wpmm_longitude')
-	);
-	}
-			
 	// Send GET request to Google Maps API
 	$api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=';
 	$api_response = wp_remote_get( $api_url . urlencode( $address ) );
