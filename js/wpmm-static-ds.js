@@ -10,6 +10,7 @@ function WPmmDataSource() {
 
 if(wpmm_features.length > 0)
     that.setFeatures_(wpmm_features);
+
 if('null' != wpmm_stores )
     that.setStores(that.parse_(wpmm_stores));
 
@@ -54,10 +55,10 @@ WPmmDataSource.prototype.getFeatures = function() {
  */
 WPmmDataSource.prototype.parse_ = function(json) {
   var stores = [];
-  
+
   // convert stores JSON to js object
   var rows = jQuery.parseJSON(json);
-
+console.log(rows);
 var allFeatures = this.FEATURES_;
 // iterate through stores collection
 jQuery.each(rows, function(i, row){

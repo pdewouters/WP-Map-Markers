@@ -39,27 +39,30 @@ jQuery(document).ready(function($) {
     $('#wpmm_geocode_button').click(function() {
         $('#wpmm_loading').show();
         $('#wpmm_geocode_button').attr('disabled', true);
-        var address;
+        var new_address;
         if(wpmm_vars.wpmm_post_id != ''){
-            address = $('#wpmm_mbe_address').val();
-        } else{
-
-            address = $('#wpmm_plugin_map_options\\[default_mapcenter\\]').val();
-            address= $input.val();
+            new_address = $('input#wpmm_mbe_address').val();
+        } else {
+            new_address = $('input#wpmm_plugin_map_options\\[default_mapcenter\\]').val();
         }
 
         data = {
             action: 'wpmm_get_results',
             wpmm_nonce: wpmm_vars.wpmm_nonce,
-            wpmm_address: address,
-            wpmm_post_id: wpmm_vars.wpmm_post_id
+            wpmm_address: new_address,
+            wpmm_post_id: wpmm_vars.wpmm_post_id,
+            wpmm_current_address: wpmm_vars.current_address,
+            wpmm_address_field: wpmm_vars.address_field
         };
 
         $.post(ajaxurl, data, function (response) {
-
+            
             console.log(response);
-            if(response.changed == true){
-                var lat_lng = jQuery.parseJSON(response.lat_lng);
+            console.log(data);
+            var wpmm_response_vars = jQuery.parseJSON(response);
+            if(wpmm_response_vars.changed == true){
+                var lat_lng = wpmm_response_vars.lat_lng;
+            
             
                 if( wpmm_vars.wpmm_post_id != '' ){
                     $('input#_wpmm_latitude').val(lat_lng.latitude);
@@ -86,7 +89,7 @@ jQuery(document).ready(function($) {
 
                         if( wpmm_vars.wpmm_post_id != '' ){
                             $('input#_wpmm_latitude').val(pos.lat());
-                            $('input#_wpmm_longitude').val(pos.lat());
+                            $('input#_wpmm_longitude').val(pos.lng());
                         }
                         else {
                             $('input#wpmm_plugin_map_options\\[default_latitude\\]').val(pos.lat());

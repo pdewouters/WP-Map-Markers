@@ -40,7 +40,7 @@ function wpmm_mbe_save_meta( $post_id ) {
 }
 
 function wpmm_process_ajax() {
-	//$lat_lng = '';
+
 	// Geocode button was clicked
 	// verify the nonce field
 	if ( !isset( $_POST['wpmm_nonce'] ) || !wp_verify_nonce( $_POST['wpmm_nonce'], 'wpmm-nonce' ) )
@@ -48,39 +48,28 @@ function wpmm_process_ajax() {
 
 	// clicking geocode address calls the click event on the button in 
 	// display-map.js which makes the address available to this function for processing
-	if ( isset( $_POST['wpmm_address'] ) ) {
+	
+	if ( isset( $_POST['wpmm_address'] ) )
 		$new_address = $_POST['wpmm_address'];
-		if ( $_POST['wpmm_post_id'] != '' ) {
-			$post_id = $_POST['wpmm_post_id'];
-			// location edit screen
-			// if address has changed, calculate new marker location
-			$current_address = get_post_meta( $_POST['wpmm_post_id'], '_wpmm_mbe_address', true );
-			if ( $current_address != $new_address ) {
+	if ( isset( $_POST['wpmm_current_address'] ) )
+		$current_address = $_POST['wpmm_current_address'];
+	if ( isset( $_POST['wpmm_address_field'] ) )
+		$address_field = $_POST['wpmm_address_field'];
 
-				$lat_lng = do_geocode_address( $_POST['wpmm_address'] );
-			} else {
-				//send changed false
-				$response = array( 'changed' => false, 'lat_lng' => '' );
-			}
-		} else {
-			// settings page
-			$options = get_option( 'wpmm_plugin_map_options' );
-
-			// If POST address is different from current
-			if ( $new_address != $options['default_mapcenter'] ) {
-				$lat_lng = do_geocode_address( $_POST['wpmm_address'] );
-				$response = array( 'changed' => true, 'lat_lng' => $lat_lng );
-			} else {
-				//send changed false
-				$response = array( 'changed' => false, 'lat_lng' => '' );
-			}
-		}
-
-		// send coordinates to ajax function (response)
-		echo json_encode( $response );
+	if($address_field != ''){
+	if ( $new_address != $current_address ) {
+		// address field value changed so process
+		$lat_lng = wpmm_do_geocode_address( $new_address );
+		$response = array( 'changed' => true, 'lat_lng' => $lat_lng );
+	} else {
+		$response = array( 'changed' => false, 'lat_lng' => '' );
 	}
 
-
+	} else {
+		// address field is still empty so put a default val
+	}
+	
+	echo json_encode($response);
 	die();
 }
 
@@ -89,7 +78,7 @@ add_action( 'wp_ajax_wpmm_get_results', 'wpmm_process_ajax' );
 // Geocodes an address and returns an array with long / lat
 
 
-function do_geocode_address( $address ) {
+function wpmm_do_geocode_address( $address ) {
 
 	// Send GET request to Google Maps API
 	$api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=';

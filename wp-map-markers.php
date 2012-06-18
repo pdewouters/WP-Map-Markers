@@ -33,11 +33,7 @@
  */
 
 // Load required files
-
-
-
-
-define( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
+//define( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
 
 /* Register activation hook. */
 register_activation_hook( __FILE__, 'wpmm_activation' );
@@ -56,11 +52,13 @@ add_action( 'plugins_loaded', 'wpmm_plugin_setup' );
 function wpmm_plugin_setup() {
 
 	add_image_size( 'store-thumb', 50, 50, true );
+
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
 
 	/* Set constant path to the WPMM plugin URL. */
 	define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
+
 	require_once WPMM_DIR . '/lib/map-taxo-meta.php';
 	require_once WPMM_DIR . '/lib/wpmm-location-geocode-metabox.php';
 	require_once WPMM_DIR . '/lib/post-types.php';
@@ -86,66 +84,17 @@ function wpmm_plugin_setup() {
 
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
-	global $wpmm_settings_page;
 
-	$is_settings_page = false;
-	$post_type = get_current_screen()->id; // when on post.php or post-new.php
-	$options = get_option( 'wpmm_plugin_map_options' );
-
-
-	if ( $hook == 'settings_page_wpmm-settings' ) {
-		// WPMM settings page
-		$is_settings_page = true;
-	} elseif ( (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
-		global $post;
-
-		// set map center from location address
-		if ( get_post_meta( $post->ID, '_wpmm_latitude', true ) && get_post_meta( $post->ID, '_wpmm_longitude', true ) ) {
-			// already has address
-			$lat = get_post_meta( $post->ID, '_wpmm_latitude', true );
-			$lng = get_post_meta( $post->ID, '_wpmm_longitude', true );
-		} else {
-			// no address set, get map center from global settings
-			if ( $options['default_latitude'] ) {
-				$lat = sanitize_text_field( $options['default_latitude'] );
-			} else {
-				$lat = 38.898748;
-			}
-			if ( $options['default_longitude'] ) {
-				$lng = sanitize_text_field( $options['default_longitude'] );
-			} else {
-				$lng = -77.037684;
-			}
-		}
-	} else {
-		return;
-	}
-
-
-	if ( $is_settings_page ) {
-		$post_id = '';
-
-		if ( $options['default_latitude'] ) {
-			$lat = sanitize_text_field( $options['default_latitude'] );
-		} else {
-			$lat = 38.898748;
-		}
-		if ( $options['default_longitude'] ) {
-			$lng = sanitize_text_field( $options['default_longitude'] );
-		} else {
-			$lng = -77.037684;
-		}
-	} else {
-		$post_id = $post->ID;
-	}
-	//wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?key=' . MAP_API_KEY . '&sensor=false' );
+	$marker_vars = wpmm_get_initial_marker_location( $hook );
 	wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
 	wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
 	wp_localize_script( 'display-map', 'wpmm_vars', array(
 		'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
-		'wpmm_post_id' => $post_id,
-		'lat' => $lat,
-		'lng' => $lng
+		'wpmm_post_id' => $marker_vars['post_id'],
+		'lat' => $marker_vars['latitude'],
+		'lng' => $marker_vars['longitude'],
+		'current_address' => $marker_vars['current_address'],
+		'address_field' => $marker_vars['address_field']
 			)
 	);
 }
@@ -181,6 +130,8 @@ function wpmm_fetch_stores( $map ) {
 
 	if ( !$locations )
 		return;
+	
+
 	// fetch posts custom meta fields vaules
 	foreach ( $locations as $location ) {
 		// get features
@@ -189,7 +140,7 @@ function wpmm_fetch_stores( $map ) {
 		$store_name = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_location_name', true ) );
 		$store_lat = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_latitude', true ) );
 		$store_lng = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_longitude', true ) );
-		$store_address = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_address', true ) );
+		$store_address = sanitize_text_field( get_post_meta( $location->ID, '_wpmm_mbe_address', true ) );
 		$store_marker = WPMM_URL . '/images/' . get_post_meta( $location->ID, '_wpmm_marker_icon', true ) . '.png';
 		$store_permalink = get_permalink( $location->ID );
 		$store_thumbnail = '';
@@ -224,4 +175,81 @@ function wpmm_get_all_features() {
 	//returns all terms fron the taxonomy features
 	$features = get_terms( 'wpmm_feature' );
 	return $features;
+}
+
+function wpmm_get_initial_marker_location( $hook ) {
+
+	$is_settings_page = false;
+	$post_type = get_current_screen()->id; // when on post.php or post-new.php
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+
+	if ( $hook == 'settings_page_wpmm-settings' ) {
+		// WPMM settings page
+		$is_settings_page = true;
+	} elseif ( (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
+		global $post;
+
+		// set address text field and current address
+		$address_text_field_id = '#wpmm_mbe_address';
+		if ( get_post_meta( $post->ID, '_wpmm_mbe_address' ) )
+			$current_address = get_post_meta( $post->ID, '_wpmm_mbe_address', true );
+		else
+			$current_address = '';
+
+		// set map center from location address
+		if ( get_post_meta( $post->ID, '_wpmm_latitude', true ) && get_post_meta( $post->ID, '_wpmm_longitude', true ) ) {
+			// already has address
+			$lat = get_post_meta( $post->ID, '_wpmm_latitude', true );
+			$lng = get_post_meta( $post->ID, '_wpmm_longitude', true );
+		} else {
+			// no address set, get map center from global settings
+			if ( $options['default_latitude'] ) {
+				$lat = sanitize_text_field( $options['default_latitude'] );
+			} else {
+				$lat = 38.898748;
+			}
+			if ( $options['default_longitude'] ) {
+				$lng = sanitize_text_field( $options['default_longitude'] );
+			} else {
+				$lng = -77.037684;
+			}
+		}
+	} else {
+		return;
+	}
+
+
+	if ( $is_settings_page ) {
+		$post_id = '';
+
+		// set address text field and current address
+		$address_text_field_id = 'input#wpmm_plugin_map_options[default_mapcenter]';
+		if ( sanitize_text_field( $options['default_mapcenter'] ) )
+			$current_address = sanitize_text_field( $options['default_mapcenter'] );
+		else
+			$current_address = '';
+
+		if ( $options['default_latitude'] ) {
+			$lat = sanitize_text_field( $options['default_latitude'] );
+		} else {
+			$lat = 38.898748;
+		}
+		if ( $options['default_longitude'] ) {
+			$lng = sanitize_text_field( $options['default_longitude'] );
+		} else {
+			$lng = -77.037684;
+		}
+	} else {
+		$post_id = $post->ID;
+	}
+
+	$marker_vars = array(
+		'latitude' => $lat,
+		'longitude' => $lng,
+		'post_id' => $post_id,
+		'current_address' => $current_address,
+		'address_field' => $address_text_field_id
+	);
+	return $marker_vars;
 }
