@@ -43,7 +43,7 @@ function wpmm_do_main_map( $attr ) {
 		// Loads the Store Locator default CSS styles
 		wp_enqueue_style( 'store-locator-style-css', WPMM_URL . 'css/storelocator.css' );
 
-		return '<div id="panel"></div><div id="map-canvas"></div>';
+		return '<div id="wpmm-container"><div id="panel"></div><div id="map-canvas"></div></div>';
 	} else {
 		return __( 'No stores', 'wpmm' );
 	}

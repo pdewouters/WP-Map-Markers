@@ -12,9 +12,8 @@
 add_action( 'admin_init', 'wpmm_initialize_plugin_options' );
 
 function wpmm_initialize_plugin_options() {
-	if ( false == get_option( 'wpmm_plugin_display_options' ) ) {
-		add_option( 'wpmm_plugin_display_options' );
-	} // end if
+
+
 	// First, we register a section. This is necessary since all future options must belong to one.
 	add_settings_section(
 			'general_settings_section', // ID used to identify this section and with which to register options
