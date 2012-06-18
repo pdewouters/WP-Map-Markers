@@ -31,8 +31,8 @@ if (is_admin()){
    */
   
   //text field
-  $my_meta->addText($prefix.'wpmm_map_tax_default_lat',array('name'=> 'Default Latitude of map center'));
-    $my_meta->addText($prefix.'wpmm_map_tax_default_lng',array('name'=> 'Default Longitude of map center'));
+  $my_meta->addText($prefix.'map_tax_default_lat',array('name'=> 'Default Latitude of map center'));
+    $my_meta->addText($prefix.'map_tax_default_lng',array('name'=> 'Default Longitude of map center'));
   //textarea field
   //$my_meta->addTextarea($prefix.'textarea_field_id',array('name'=> 'My Textarea '));
   //checkbox field

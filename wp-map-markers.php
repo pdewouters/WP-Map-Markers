@@ -61,12 +61,13 @@ function wpmm_plugin_setup() {
 
 	/* Set constant path to the WPMM plugin URL. */
 	define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
+		require_once WPMM_DIR . '/lib/map-taxo-meta.php';
 	require_once WPMM_DIR . '/lib/wpmm-location-geocode-metabox.php';
 	require_once WPMM_DIR . '/lib/post-types.php';
 	require_once WPMM_DIR . '/lib/taxonomies.php';
 	require_once WPMM_DIR . '/lib/metaboxes.php';
 	require_once WPMM_DIR . '/lib/shortcodes.php';
-	require_once WPMM_DIR . '/lib/map-taxo-meta.php';
+
 
 	if ( is_admin() ) {
 
