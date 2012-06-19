@@ -203,7 +203,12 @@ function wpmm_plugin_display() {
 		<!-- Add the icon to the page -->
 		<div id="icon-plugins" class="icon32"></div>
 		<h2><?php _e( 'Map Markers Options', 'wpmm-map-markers' ); ?></h2>
-
+		<h3><?php _e('Getting started','wpmm-map-markers'); ?></h3>
+		<div class="updated">
+			
+			<p><?php $add_map_url = admin_url() . 'edit-tags.php?taxonomy=wpmm_map&post_type=wpmm_location'; printf(__('You should start by adding a map %1$shere%2$s.','wpmm-map-markers'),'<a href="' .$add_map_url  . '">','</a>'); ?></p>
+			
+		</div>
 		<!-- Make a call to the WordPress function for rendering errors when settings are saved. -->
 		<?php settings_errors(); ?>
 

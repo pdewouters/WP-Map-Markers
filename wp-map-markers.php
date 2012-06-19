@@ -32,8 +32,15 @@
  * localization
  */
 
-// Load required files
-//define( 'MAP_API_KEY', 'AIzaSyDHje59oiWoK8WCgVdN1zrxrIGqrW9cTiQ' );
+if ( version_compare(PHP_VERSION, '5.2', '<') ) {
+	if ( is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) ) {
+		require_once ABSPATH.'/wp-admin/includes/plugin.php';
+		deactivate_plugins( __FILE__ );
+	    wp_die( __('WP Map Markers requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself.', 'wpmm-map-markers') );
+	} else {
+		return;
+	}
+}
 
 /* Register activation hook. */
 register_activation_hook( __FILE__, 'wpmm_activation' );
@@ -44,7 +51,9 @@ function wpmm_activation() {
 	if ( !empty( $role ) ) {
 		$role->add_cap( 'wpmm_unique_capability' );
 	}
+	
 }
+
 
 add_action( 'plugins_loaded', 'wpmm_plugin_setup' );
 
@@ -90,7 +99,7 @@ function wpmm_enqueue_scripts( $hook ) {
 	if ( $hook == 'settings_page_wpmm-settings' || (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
 		$marker_vars = wpmm_get_initial_marker_location( $hook );
 		wp_enqueue_script( 'gmaps', 'https://maps.googleapis.com/maps/api/js?sensor=false' );
-		wp_enqueue_script( 'display-map', 'http://localhost/wptest/wp-content/plugins/wp-map-markers/js/display-map.js', array( 'jquery' ) );
+		wp_enqueue_script( 'display-map', WPMM_URL . 'js/display-map.js', array( 'jquery' ) );
 		wp_localize_script( 'display-map', 'wpmm_vars', array(
 			'wpmm_nonce' => wp_create_nonce( 'wpmm-nonce' ),
 			'wpmm_post_id' => $marker_vars['post_id'],
@@ -256,4 +265,31 @@ function wpmm_get_initial_marker_location( $hook ) {
 		'address_field' => $address_text_field_id
 	);
 	return $marker_vars;
+}
+
+
+/* Display a notice that can be dismissed */
+add_action('admin_notices', 'wpmm_admin_notice');
+
+function wpmm_admin_notice() {
+	$settings_page = admin_url() . 'options-general.php?page=wpmm-settings';
+	global $current_user ;
+	$user_id = $current_user->ID;
+	/* Check that the user hasn't already clicked to ignore the message */
+	if ( ! get_user_meta($user_id, 'wpmm_ignore_notice') ) {
+		echo '<div class="updated"><p>';
+		printf(__('Plugin activated. Please check the %1$ssettings%2$s. | %3$sDismiss%4$s','wpmm-map-markers'), '<a href="' . $settings_page . '">', '</a>','<a href="?wpmm_nag_ignore=0">','</a>');
+		echo "</p></div>";
+	}
+}
+
+add_action('admin_init', 'wpmm_nag_ignore');
+
+function wpmm_nag_ignore() {
+	global $current_user;
+	$user_id = $current_user->ID;
+	/* If user clicks to ignore the notice, add that to their user meta */
+	if ( isset($_GET['wpmm_nag_ignore']) && '0' == $_GET['wpmm_nag_ignore'] ) {
+		add_user_meta($user_id, 'wpmm_ignore_notice', 'true', true);
+	}
 }
