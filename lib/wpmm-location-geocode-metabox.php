@@ -5,7 +5,7 @@ add_action( 'add_meta_boxes', 'wpmm_mbe_create' );
 function wpmm_mbe_create() {
 	global $wpmm_metabox;
 	//create a custom meta box
-	$wpmm_metabox = add_meta_box( 'wpmm-meta', __( 'Address', 'wpmm' ), 'wpmm_mbe_function', 'wpmm_location', 'normal', 'high' );
+	$wpmm_metabox = add_meta_box( 'wpmm-meta', __( 'Address', 'wpmm-map-markers' ), 'wpmm_mbe_function', 'wpmm_location', 'normal', 'high' );
 }
 
 function wpmm_mbe_function( $post ) {

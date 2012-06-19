@@ -23,50 +23,50 @@ function cmb_wpmm_metaboxes( array $meta_boxes ) {
 
 	$meta_boxes[] = array(
 		'id' => 'wpmm_metabox',
-		'title' => 'Map Markers Options',
+		'title' => __('Map Markers Options','wpmm-map-markers'),
 		'pages' => array( 'wpmm_location', ), // Post type
 		'context' => 'normal',
 		'priority' => 'high',
 		'show_names' => true, // Show field names on the left
 		'fields' => array(
 			array(
-				'name' => 'Location name',
-				'desc' => 'the name of the location',
+				'name' => __('Location name','wpmm-map-markers'),
+				'desc' => __('the name of the location','wpmm-map-markers'),
 				'id' => $prefix . 'location_name',
 				'type' => 'text',
 			),
 			array(
-				'name' => 'Dsiplay on map',
-				'desc' => 'check to display this location on the global map',
+				'name' => __('Display on map','wpmm-map-markers'),
+				'desc' => __('check to display this location on the global map','wpmm-map-markers'),
 				'id' => $prefix . 'displayonmap',
 				'std' => true,
 				'type' => 'checkbox',
 				
 			),
 			array(
-				'name' => 'Latitude',
-				'desc' => 'the latitude of the location',
+				'name' => __('Latitude','wpmm-map-markers'),
+				'desc' => __('the latitude of the location','wpmm-map-markers'),
 				'id' => $prefix . 'latitude',
 				'type' => 'text',
 			),
 			array(
-				'name' => 'Longitude',
-				'desc' => 'the longitude of the location',
+				'name' => __('Longitude','wpmm-map-markers'),
+				'desc' => __('the longitude of the location','wpmm-map-markers'),
 				'id' => $prefix . 'longitude',
 				'type' => 'text',
 			),
 			array(
-				'name' => 'Marker icon',
-				'desc' => 'select the marker icon',
+				'name' => __('Marker icon','wpmm-map-markers'),
+				'desc' => __('select the marker icon','wpmm-map-markers'),
 				'id' => $prefix . 'marker_icon',
 				'type' => 'radio',
 				'options' => array(
-					array( 'name' => 'Blue', 'value' => 'blue-marker', ),
-					array( 'name' => 'Green', 'value' => 'green-marker', ),
-					array( 'name' => 'Orange', 'value' => 'orange-marker', ),
-					array( 'name' => 'Yellow', 'value' => 'yellow-marker', ),
-					array( 'name' => 'Red', 'value' => 'red-marker', ),
-					array( 'name' => 'Pink', 'value' => 'pink-marker', ),
+					array( 'name' => __('Blue','wpmm-map-markers'), 'value' => 'blue-marker', ),
+					array( 'name' => __('Green','wpmm-map-markers'), 'value' => 'green-marker', ),
+					array( 'name' => __('Orange','wpmm-map-markers'), 'value' => 'orange-marker', ),
+					array( 'name' => __('Yellow','wpmm-map-markers'), 'value' => 'yellow-marker', ),
+					array( 'name' => __('Red','wpmm-map-markers'), 'value' => 'red-marker', ),
+					array( 'name' => __('Pink','wpmm-map-markers'), 'value' => 'pink-marker', ),
 				),
 				'std' => 'blue-marker'
 			),

@@ -12,7 +12,7 @@ if ( is_admin() ) {
 	 */
 	$config = array(
 		'id' => 'demo_meta_box', // meta box id, unique per meta box
-		'title' => 'Demo Meta Box', // meta box title
+		'title' => __('Map Meta Box','wpmm-map-markers'), // meta box title
 		'pages' => array( 'wpmm_map' ), // taxonomy name, accept categories, post_tag and custom taxonomies
 		'context' => 'normal', // where the meta box appear: normal (default), advanced, side; optional
 		'fields' => array( ), // list of meta fields (can be added by field arrays)
@@ -31,8 +31,8 @@ if ( is_admin() ) {
 	 */
 
 	//text field
-	$my_meta->addText( $prefix . 'map_tax_default_lat', array( 'name' => 'Default Latitude of map center' ) );
-	$my_meta->addText( $prefix . 'map_tax_default_lng', array( 'name' => 'Default Longitude of map center' ) );
+	$my_meta->addText( $prefix . 'map_tax_default_lat', array( 'name' => __('Default Latitude of map center','wpmm-map-markers') ) );
+	$my_meta->addText( $prefix . 'map_tax_default_lng', array( 'name' => __('Default Longitude of map center','wpmm-map-markers') ) );
 	//textarea field
 	//$my_meta->addTextarea($prefix.'textarea_field_id',array('name'=> 'My Textarea '));
 	//checkbox field

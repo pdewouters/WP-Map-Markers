@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: WP Map markers v0.9\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-06-18 23:50:59+0000\n"
+"PO-Revision-Date: 2012-06-19 00:02:48+0000\n"
 "Last-Translator: admin <paul@wpconsult.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -122,6 +122,7 @@ msgid "Set the Google maps defaults."
 msgstr "Définir les règlages Google maps par défaut"
 
 #: lib/admin.php:205
+#: lib/metaboxes.php:26
 #@ wpmm-map-markers
 msgid "Map Markers Options"
 msgstr "Options de WP Map Markers"
@@ -345,9 +346,9 @@ msgid "Maps"
 msgstr "Cartes"
 
 #: lib/wpmm-location-geocode-metabox.php:8
-#@ wpmm
+#@ wpmm-map-markers
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: lib/wpmm-location-geocode-metabox.php:16
 #@ wpmm-map-markers
@@ -369,4 +370,99 @@ msgstr "Options de WP Map Markers"
 #@ wpmm-map-markers
 msgid "WP Map Markers"
 msgstr "WP Map Markers"
+
+#: lib/map-taxo-meta.php:15
+#@ wpmm-map-markers
+msgid "Map Meta Box"
+msgstr "Informations meta de la carte"
+
+#: lib/map-taxo-meta.php:34
+#@ wpmm-map-markers
+msgid "Default Latitude of map center"
+msgstr "Latitude par défaut du centre de la carte"
+
+#: lib/map-taxo-meta.php:35
+#@ wpmm-map-markers
+msgid "Default Longitude of map center"
+msgstr "Longitude par défaut du centre de la carte"
+
+#: lib/metaboxes.php:33
+#@ wpmm-map-markers
+msgid "Location name"
+msgstr "Nom de l'endroit"
+
+#: lib/metaboxes.php:34
+#@ wpmm-map-markers
+msgid "the name of the location"
+msgstr "le nom de l'endroit"
+
+#: lib/metaboxes.php:39
+#@ wpmm-map-markers
+msgid "Display on map"
+msgstr "Montrer sur la carte"
+
+#: lib/metaboxes.php:40
+#@ wpmm-map-markers
+msgid "check to display this location on the global map"
+msgstr "cocher pour montrer cet endroit sur la carte"
+
+#: lib/metaboxes.php:47
+#@ wpmm-map-markers
+msgid "Latitude"
+msgstr "Latitude"
+
+#: lib/metaboxes.php:48
+#@ wpmm-map-markers
+msgid "the latitude of the location"
+msgstr "la latidude de l'endroit"
+
+#: lib/metaboxes.php:53
+#@ wpmm-map-markers
+msgid "Longitude"
+msgstr "Longitude"
+
+#: lib/metaboxes.php:54
+#@ wpmm-map-markers
+msgid "the longitude of the location"
+msgstr "la longitude de l'endroit"
+
+#: lib/metaboxes.php:59
+#@ wpmm-map-markers
+msgid "Marker icon"
+msgstr "Icône du marqueur"
+
+#: lib/metaboxes.php:60
+#@ wpmm-map-markers
+msgid "select the marker icon"
+msgstr "choisissez l'icône"
+
+#: lib/metaboxes.php:64
+#@ wpmm-map-markers
+msgid "Blue"
+msgstr "Bleu"
+
+#: lib/metaboxes.php:65
+#@ wpmm-map-markers
+msgid "Green"
+msgstr "Vert"
+
+#: lib/metaboxes.php:66
+#@ wpmm-map-markers
+msgid "Orange"
+msgstr "Orange"
+
+#: lib/metaboxes.php:67
+#@ wpmm-map-markers
+msgid "Yellow"
+msgstr "Jaune"
+
+#: lib/metaboxes.php:68
+#@ wpmm-map-markers
+msgid "Red"
+msgstr "Rouge"
+
+#: lib/metaboxes.php:69
+#@ wpmm-map-markers
+msgid "Pink"
+msgstr "Rose"
 
