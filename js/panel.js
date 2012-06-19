@@ -3,7 +3,6 @@
 // - custom info window (using Info Bubble)
 // - custom info window content (+ store hours)
 
-//console.log(wpmm_panel_vars);
 var globalSettings = jQuery.parseJSON(wpmm_panel_vars.wpmm_settings);
 
 

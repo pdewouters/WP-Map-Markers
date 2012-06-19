@@ -56,9 +56,7 @@ jQuery(document).ready(function($) {
         };
 
         $.post(ajaxurl, data, function (response) {
-            
-            console.log(response);
-            console.log(data);
+
             var wpmm_response_vars = jQuery.parseJSON(response);
             if(wpmm_response_vars.changed == true){
                 var lat_lng = wpmm_response_vars.lat_lng;

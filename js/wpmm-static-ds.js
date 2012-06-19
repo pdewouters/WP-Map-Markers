@@ -58,7 +58,7 @@ WPmmDataSource.prototype.parse_ = function(json) {
 
   // convert stores JSON to js object
   var rows = jQuery.parseJSON(json);
-console.log(rows);
+
 var allFeatures = this.FEATURES_;
 // iterate through stores collection
 jQuery.each(rows, function(i, row){
