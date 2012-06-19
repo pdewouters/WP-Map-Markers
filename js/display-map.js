@@ -37,8 +37,7 @@ jQuery(document).ready(function($) {
 
     }
     $('#wpmm_geocode_button').click(function() {
-        $('#wpmm_loading').show();
-        $('#wpmm_geocode_button').attr('disabled', true);
+
         var new_address;
         if(wpmm_vars.wpmm_post_id != ''){
             new_address = $('input#wpmm_mbe_address').val();
@@ -59,6 +58,8 @@ jQuery(document).ready(function($) {
 
             var wpmm_response_vars = jQuery.parseJSON(response);
             if(wpmm_response_vars.changed == true){
+                        $('#wpmm_loading').show();
+        $('#wpmm_geocode_button').attr('disabled', true);
                 var lat_lng = wpmm_response_vars.lat_lng;
             
             
@@ -78,6 +79,10 @@ jQuery(document).ready(function($) {
                     map: map
                 });            
                 map.setCenter(location);
+                
+            $('#wpmm_loading').hide();
+            $('#wpmm_geocode_button').attr('disabled', false);
+                            };
                 google.maps.event.addListener (marker, 'dragend', 
                     function (event) {       
                         // Pan the maps center to the markers position
@@ -94,9 +99,7 @@ jQuery(document).ready(function($) {
                             $('input#wpmm_plugin_map_options\\[default_longitude\\]').val(pos.lng());
                         } 
                     });
-            };
-            $('#wpmm_loading').hide();
-            $('#wpmm_geocode_button').attr('disabled', false);
+
         });	
         
         return false;

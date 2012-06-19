@@ -106,7 +106,7 @@ function wpmm_default_mapcenter_callback( $args ) {
 
 	// Here, we will take the first argument of the array and add it to a label next to the checkbox
 	$html .= '<label for="wpmm_plugin_map_options[default_mapcenter]"> ' . $args[0] . '</label>';
-
+$html .='<form id="wpmm-form-settings" action="" method="POST"><div><input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" /><img src="' . admin_url( '/images/wpspin_light.gif' ) . '" class="waiting" id="wpmm_loading" style="display:none;"/></div></form><div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>';
 	echo $html;
 }
 
@@ -116,7 +116,7 @@ function wpmm_default_latitude_callback( $args ) {
 	$options = get_option( 'wpmm_plugin_map_options' );
 
 	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
-	$html = '<input type="text" id="wpmm_plugin_map_options[default_latitude]" name="wpmm_plugin_map_options[default_latitude]" value="' . $options['default_latitude'] . '" />';
+	$html = '<input type="text" id="wpmm_plugin_map_options[default_latitude]" name="wpmm_plugin_map_options[default_latitude]" value="' . $options['default_latitude'] . '" readonly="readonly" />';
 
 	// Here, we will take the first argument of the array and add it to a label next to the checkbox
 	$html .= '<label for="wpmm_plugin_map_options[default_latitude]"> ' . $args[0] . '</label>';
@@ -132,7 +132,7 @@ function wpmm_default_longitude_callback( $args ) {
 	$options = get_option( 'wpmm_plugin_map_options' );
 
 	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
-	$html = '<input type="text" id="wpmm_plugin_map_options[default_longitude]" name="wpmm_plugin_map_options[default_longitude]" value="' . $options['default_longitude'] . '" />';
+	$html = '<input type="text" id="wpmm_plugin_map_options[default_longitude]" name="wpmm_plugin_map_options[default_longitude]" value="' . $options['default_longitude'] . '" readonly="readonly" />';
 
 	// Here, we will take the first argument of the array and add it to a label next to the checkbox
 	$html .= '<label for="wpmm_plugin_map_options[default_longitude]"> ' . $args[0] . '</label>';
@@ -203,29 +203,23 @@ function wpmm_plugin_display() {
 		<!-- Add the icon to the page -->
 		<div id="icon-plugins" class="icon32"></div>
 		<h2><?php _e( 'Map Markers Options', 'wpmm-map-markers' ); ?></h2>
-		<h3><?php _e('Getting started','wpmm-map-markers'); ?></h3>
+		<h3><?php _e( 'Getting started', 'wpmm-map-markers' ); ?></h3>
 		<div class="updated">
-			
-			<p><?php $add_map_url = admin_url() . 'edit-tags.php?taxonomy=wpmm_map&post_type=wpmm_location'; printf(__('You should start by adding a map %1$shere%2$s.','wpmm-map-markers'),'<a href="' .$add_map_url  . '">','</a>'); ?></p>
-			
+
+			<p><?php $add_map_url = admin_url() . 'edit-tags.php?taxonomy=wpmm_map&post_type=wpmm_location';
+	printf( __( 'You should start by adding a map %1$shere%2$s.', 'wpmm-map-markers' ), '<a href="' . $add_map_url . '">', '</a>' ); ?></p>
+
 		</div>
 		<!-- Make a call to the WordPress function for rendering errors when settings are saved. -->
-		<?php settings_errors(); ?>
+	<?php settings_errors(); ?>
 
 		<!-- Create the form that will be used to render our options -->
 		<form method="post" action="options.php">
 			<?php settings_fields( 'wpmm_plugin_map_options' ); ?>
 			<?php do_settings_sections( 'wpmm_plugin_map_options' ); ?>
-			<?php submit_button(); ?>
+	<?php submit_button(); ?>
 		</form>
 
-		<form id="wpmm-form-settings" action="" method="POST">
-			<div>
-				<input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" />
-				<img src="<?php echo admin_url( '/images/wpspin_light.gif' ); ?>" class="waiting" id="wpmm_loading" style="display:none;"/>
-			</div>
-		</form>
-		<div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>
 
 
 	</div><!-- /.wrap -->
@@ -235,6 +229,7 @@ function wpmm_plugin_display() {
 // end wpmm_plugin_display
 
 function wpmm_plugin_validate_input( $input ) {
+
 
 	// Create our array for storing the validated options
 	$output = array( );
@@ -264,7 +259,7 @@ function wpmm_unique_capability( $cap ) {
 function wpmm_get_default_settings() {
 
 	$map_center = 'rome,italy';
-	$lat_lng_def = do_geocode_address( 'rome,italy' );
+	$lat_lng_def = wpmm_do_geocode_address( 'rome,italy' );
 	$map_center_lat = $lat_lng_def['latitude'];
 	$map_center_lng = $lat_lng_def['longitude'];
 
@@ -280,29 +275,29 @@ function wpmm_get_default_settings() {
 }
 
 /* Display a notice that can be dismissed */
-add_action('admin_notices', 'wpmm_admin_notice');
+add_action( 'admin_notices', 'wpmm_admin_notice' );
 
 function wpmm_admin_notice() {
 	$settings_page = admin_url() . 'options-general.php?page=wpmm-settings';
-	global $current_user ;
+	global $current_user;
 	$user_id = $current_user->ID;
-	if(current_user_can( 'manage_options' )){
-	/* Check that the user hasn't already clicked to ignore the message */
-	if ( ! get_user_meta($user_id, 'wpmm_ignore_notice') ) {
-		echo '<div class="updated"><p>';
-		printf(__('Plugin activated. Please check the %1$ssettings%2$s. | %3$sDismiss%4$s','wpmm-map-markers'), '<a href="' . $settings_page . '">', '</a>','<a href="?wpmm_nag_ignore=0">','</a>');
-		echo "</p></div>";
-	}
+	if ( current_user_can( 'manage_options' ) ) {
+		/* Check that the user hasn't already clicked to ignore the message */
+		if ( !get_user_meta( $user_id, 'wpmm_ignore_notice' ) ) {
+			echo '<div class="updated"><p>';
+			printf( __( 'Plugin activated. Please check the %1$ssettings%2$s. | %3$sDismiss%4$s', 'wpmm-map-markers' ), '<a href="' . $settings_page . '">', '</a>', '<a href="?wpmm_nag_ignore=0">', '</a>' );
+			echo "</p></div>";
+		}
 	}
 }
 
-add_action('admin_init', 'wpmm_nag_ignore');
+add_action( 'admin_init', 'wpmm_nag_ignore' );
 
 function wpmm_nag_ignore() {
 	global $current_user;
 	$user_id = $current_user->ID;
 	/* If user clicks to ignore the notice, add that to their user meta */
-	if ( isset($_GET['wpmm_nag_ignore']) && '0' == $_GET['wpmm_nag_ignore'] ) {
-		add_user_meta($user_id, 'wpmm_ignore_notice', 'true', true);
+	if ( isset( $_GET['wpmm_nag_ignore'] ) && '0' == $_GET['wpmm_nag_ignore'] ) {
+		add_user_meta( $user_id, 'wpmm_ignore_notice', 'true', true );
 	}
 }

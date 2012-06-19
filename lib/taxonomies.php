@@ -19,7 +19,7 @@ function register_taxonomy_features() {
 		'separate_items_with_commas' => __( 'Separate Features with commas', 'wpmm-map-markers' ),
 		'add_or_remove_items' => __( 'Add or remove Features', 'wpmm-map-markers' ),
 		'choose_from_most_used' => __( 'Choose from the most used Features', 'wpmm-map-markers' ),
-		'menu_name' => __( 'Feature', 'wpmm-map-markers' ),
+		'menu_name' => __( 'Features', 'wpmm-map-markers' ),
 	);
 
 	$args = array(
