@@ -3,7 +3,7 @@ Contributors: pauldewouters
 Tags: google maps, store locator, maps
 Requires at least: 3.3
 Tested up to: 3.4
-Stable tag: 0.9
+Stable tag: 0.9.1
 
 WP Map Markers is a plugin that brings the Google Maps Store locator library to your WordPress website. It uses the v3 API.
 
@@ -29,3 +29,8 @@ Extract the zip file and just drop the contents in the wp-content/plugins/ direc
 ==Readme Generator== 
 
 This Readme file was generated using <a href = 'http://sudarmuthu.com/wordpress/wp-readme'>wp-readme</a>, which generates readme files for WordPress Plugins.
+
+==Changelog==
+
+= 0.9.1 =
+* First Release
