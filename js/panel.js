@@ -12,7 +12,7 @@ var globalSettings = jQuery.parseJSON(wpmm_panel_vars.wpmm_settings);
 //    new google.maps.Point(14, 13));
 
 var SHADOW = new google.maps.MarkerImage(globalSettings.marker_shadow, null, null,
-    new google.maps.Point(14, 13));
+    new google.maps.Point(14, 2));
 
 google.maps.event.addDomListener(window, 'load', function() {
 
