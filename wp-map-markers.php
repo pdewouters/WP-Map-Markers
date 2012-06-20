@@ -32,11 +32,11 @@
  * localization
  */
 
-if ( version_compare(PHP_VERSION, '5.2', '<') ) {
-	if ( is_admin() && (!defined('DOING_AJAX') || !DOING_AJAX) ) {
-		require_once ABSPATH.'/wp-admin/includes/plugin.php';
+if ( version_compare( PHP_VERSION, '5.2', '<' ) ) {
+	if ( is_admin() && (!defined( 'DOING_AJAX' ) || !DOING_AJAX) ) {
+		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 		deactivate_plugins( __FILE__ );
-	    wp_die( __('WP Map Markers requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself.', 'wpmm-map-markers') );
+		wp_die( __( 'WP Map Markers requires PHP 5.2 or higher, as does WordPress 3.2 and higher. The plugin has now disabled itself.', 'wpmm-map-markers' ) );
 	} else {
 		return;
 	}
@@ -51,9 +51,7 @@ function wpmm_activation() {
 	if ( !empty( $role ) ) {
 		$role->add_cap( 'wpmm_unique_capability' );
 	}
-	
 }
-
 
 add_action( 'plugins_loaded', 'wpmm_plugin_setup' );
 
@@ -64,7 +62,7 @@ function wpmm_plugin_setup() {
 
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
-	define('WPMM_FILE', __FILE__);
+	define( 'WPMM_FILE', __FILE__ );
 
 	/* Set constant path to the WPMM plugin URL. */
 	define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
@@ -80,7 +78,7 @@ function wpmm_plugin_setup() {
 	if ( is_admin() ) {
 
 		/* Load translations. */
-		load_plugin_textdomain( 'wpmm-map-markers', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/'  );
+		load_plugin_textdomain( 'wpmm-map-markers', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 		/* Load the plugin's admin file. */
 		require_once WPMM_DIR . '/lib/admin.php';
@@ -90,12 +88,14 @@ function wpmm_plugin_setup() {
 	add_action( 'admin_enqueue_scripts', 'wpmm_enqueue_scripts' );
 
 	add_shortcode( 'wpmm_map', 'wpmm_do_display_map' );
+	
+	add_action('wp_head','wpmm_do_map_dimensions');
 }
 
 // Load necessary javascript and CSS files
 function wpmm_enqueue_scripts( $hook ) {
 	global $post_type;
-	
+
 	// only load scripts when necessary
 	if ( $hook == 'settings_page_wpmm-settings' || (($hook == 'post.php') || ($hook == 'post-new.php')) && ('wpmm_location' == $post_type) ) {
 		$marker_vars = wpmm_get_initial_marker_location( $hook );
@@ -267,3 +267,21 @@ function wpmm_get_initial_marker_location( $hook ) {
 	);
 	return $marker_vars;
 }
+
+// Set the map dimensions by outputting CSS to the head
+function wpmm_do_map_dimensions() {
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	if ( isset( $options['wpmm_map_height'] ) ) {
+		$height = $options['wpmm_map_height'];
+	} else {
+		$height = '450px';
+	}
+	if ( isset( $options['wpmm_map_width'] ) ) {
+		$width = $options['wpmm_map_width'];
+	} else {
+		$width = '450px';
+	}
+	echo "<style> #wpmm-container #map-canvas, #wpmm-container #panel {width: $width; height: $height; float: left; }</style>";
+}
+

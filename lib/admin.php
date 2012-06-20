@@ -61,6 +61,28 @@ function wpmm_initialize_plugin_options() {
 		__( 'Choose the map type.', 'wpmm-map-markers' )
 			)
 	);
+	
+	add_settings_field(
+			'wpmm_map_width', // ID used to identify the field throughout the plugin
+			__( 'Map width', 'wpmm-map-markers' ), // The label to the left of the option interface element
+			'wpmm_map_width_callback', // The name of the function responsible for rendering the option interface
+			'wpmm_plugin_map_options', // The page on which this option will be displayed
+			'general_settings_section', // The name of the section to which this field belongs
+			array( // The array of arguments to pass to the callback. In this case, just a description.
+		__( 'Define the map width (ex: 500px or 100%).', 'wpmm-map-markers' )
+			)
+	);	
+	
+		add_settings_field(
+			'wpmm_map_height', // ID used to identify the field throughout the plugin
+			__( 'Map height', 'wpmm-map-markers' ), // The label to the left of the option interface element
+			'wpmm_map_height_callback', // The name of the function responsible for rendering the option interface
+			'wpmm_plugin_map_options', // The page on which this option will be displayed
+			'general_settings_section', // The name of the section to which this field belongs
+			array( // The array of arguments to pass to the callback. In this case, just a description.
+		__( 'Define the map height (ex: 500px or 100%).', 'wpmm-map-markers' )
+			)
+	);	
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -173,6 +195,34 @@ function wpmm_map_type_callback( $args ) {
 	echo $html;
 }
 
+function wpmm_map_width_callback( $args ) {
+
+	// Read the options collection
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+	$html = '<input type="text" id="wpmm_plugin_map_options[wpmm_map_width]" name="wpmm_plugin_map_options[wpmm_map_width]" value="' . $options['wpmm_map_width'] . '" />';
+
+	// Here, we will take the first argument of the array and add it to a label next to the checkbox
+	$html .= '<label for="wpmm_plugin_map_options[wpmm_map_width]"> ' . $args[0] . '</label>';
+
+	echo $html;
+}
+
+function wpmm_map_height_callback( $args ) {
+
+	// Read the options collection
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+	$html = '<input type="text" id="wpmm_plugin_map_options[wpmm_map_height]" name="wpmm_plugin_map_options[wpmm_map_height]" value="' . $options['wpmm_map_height'] . '" />';
+
+	// Here, we will take the first argument of the array and add it to a label next to the checkbox
+	$html .= '<label for="wpmm_plugin_map_options[wpmm_map_height]"> ' . $args[0] . '</label>';
+
+	echo $html;
+}
+
 // end sandbox_radio_element_callback
 
 function wpmm_create_menu_page() {
@@ -269,7 +319,9 @@ function wpmm_get_default_settings() {
 		'default_mapcenter' => $map_center,
 		'default_latitude' => $map_center_lat,
 		'default_longitude' => $map_center_lng,
-		'map_type' => 'google.maps.MapTypeId.ROADMAP'
+		'map_type' => 'google.maps.MapTypeId.ROADMAP',
+		'wpmm_map_height' => '450px',
+		'wpmm_map_width' => '100%'
 	);
 	return $wpmm_settings;
 }

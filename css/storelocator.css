@@ -1,9 +1,6 @@
 /* Default maps styles */
 
-#wpmm-container {position: relative;width: 100%; height: 1200px;}
-      #map-canvas, #panel { height: 500px; }
 
-      #panel { width: 98%; position: absolute; top: 520px;}
       #panel .feature-filter label { width: 130px; }
 
 /* fixes weird display issues */      
