@@ -314,7 +314,7 @@ function wpmm_get_default_settings() {
 	$map_center_lng = $lat_lng_def['longitude'];
 
 	$wpmm_settings = array(
-		'marker_shadow' => WPMM_URL . 'images/marker-shadow.png',
+		'marker_shadow' => WPMM_URL . '/images/marker-shadow.png',
 		'default_zoom' => 8,
 		'default_mapcenter' => $map_center,
 		'default_latitude' => $map_center_lat,

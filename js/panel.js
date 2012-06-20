@@ -4,8 +4,7 @@
 // - custom info window content (+ store hours)
 
 var globalSettings = jQuery.parseJSON(wpmm_panel_vars.wpmm_settings);
-
-
+console.log(globalSettings);
 
 //var ICON = new google.maps.MarkerImage(globalSettings.marker_icon, null, null,
 //    new google.maps.Point(14, 13));

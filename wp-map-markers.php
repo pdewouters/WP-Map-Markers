@@ -1,5 +1,4 @@
 <?php
-
 /*
   Plugin Name: WP Map markers
   Plugin URI: http://wpmapmarkers.com
@@ -31,6 +30,8 @@
 /*
  * localization
  */
+if ( !defined( "WPMM_CURRENT_PAGE" ) )
+	define( "WPMM_CURRENT_PAGE", basename( $_SERVER['PHP_SELF'] ) );
 
 if ( version_compare( PHP_VERSION, '5.2', '<' ) ) {
 	if ( is_admin() && (!defined( 'DOING_AJAX' ) || !DOING_AJAX) ) {
@@ -88,8 +89,15 @@ function wpmm_plugin_setup() {
 	add_action( 'admin_enqueue_scripts', 'wpmm_enqueue_scripts' );
 
 	add_shortcode( 'wpmm_map', 'wpmm_do_display_map' );
-	
-	add_action('wp_head','wpmm_do_map_dimensions');
+
+	add_action( 'wp_head', 'wpmm_do_map_dimensions' );
+
+
+
+	if ( in_array( WPMM_CURRENT_PAGE, array( 'post.php', 'page.php', 'page-new.php', 'post-new.php' ) ) ) {
+		add_action( 'media_buttons_context', 'wpmm_add_map_button' );
+		add_action( 'admin_footer', 'wpmm_add_popup_map_selector' );
+	}
 }
 
 // Load necessary javascript and CSS files
@@ -285,3 +293,52 @@ function wpmm_do_map_dimensions() {
 	echo "<style> #wpmm-container #map-canvas, #wpmm-container #panel {width: $width; height: $height; float: left; }</style>";
 }
 
+//action to add a custom button to the content editor
+function wpmm_add_map_button( $context ) {
+
+	//path to my icon
+	$img = WPMM_URL . '/images/map-icon.png';
+
+	//the id of the container I want to show in the popup
+	$container_id = 'popup_container';
+
+	//our popup's title
+	$title = 'Insert a map';
+
+	//append the icon
+	$context .= "<a class='thickbox' title='{$title}'
+    href='#TB_inline?width=400&inlineId={$container_id}'>
+    <img src='{$img}' /></a>";
+
+	return $context;
+}
+
+function wpmm_add_popup_map_selector() {
+	?>
+	<div id="popup_container" style="display:none;">
+		<h2>Select a map</h2>
+		<script>
+			function wpmm_insert_map(){
+				var map_id = jQuery("#map_select").val();
+				if(map_id == ""){
+					alert("<?php _e( "Please select a map", "wpmm-map-markers" ) ?>");
+					return;
+				}
+
+				window.send_to_editor("[wpmm_map map=\"" + map_id +  "\"" + "]");
+			}
+		</script>
+		<?php
+		$args = array(
+			'taxonomy' => 'wpmm_map',
+			'id' => 'map_select'
+		);
+		wp_dropdown_categories( $args );
+		?>
+		<div style="padding:15px;">
+			<input type="button" class="button-primary" value="Insert Map" onclick="wpmm_insert_map();"/>&nbsp;&nbsp;&nbsp;
+			<a class="button" style="color:#bbb;" href="#" onclick="tb_remove(); return false;"><?php _e( "Cancel", "gravityforms" ); ?></a>
+		</div>
+	</div>
+	<?php
+}

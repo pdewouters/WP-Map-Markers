@@ -6,13 +6,15 @@ function wpmm_do_display_map( $attr ) {
 	// don't display maps on archive pages because multiple maps don't work
 	if ( !isset( $attr['map'] ) || is_home() || is_archive() )
 		return;
-
-	$stores = json_encode( wpmm_fetch_stores( $attr['map'] ) );
+	
+		$term = get_term_by( 'id', $attr['map'], 'wpmm_map' );
+		$term_id = $term->term_id;
+		$term_slug = $term->slug;
+	$stores = json_encode( wpmm_fetch_stores( $term_slug ) );
 
 	if ( 'null' != $stores ) {
 		// get map coordinates
-		$term = get_term_by( 'slug', $attr['map'], 'wpmm_map' );
-		$term_id = $term->term_id;
+
 		
 		$lat = get_tax_meta( $term_id, 'wpmm_map_tax_default_lat' );
 		$lng = get_tax_meta( $term_id, 'wpmm_map_tax_default_lng' );
