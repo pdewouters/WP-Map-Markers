@@ -6,9 +6,9 @@ add_action( 'init', 'register_cpt_wpmm_location' );
 function register_cpt_wpmm_location() {
 
 	$labels = array(
-		'name' => _x( 'Locations', 'post type general name' ),
-		'singular_name' => _x( 'Location', 'post type singular name' ),
-		'add_new' => _x( 'Add New', 'wpmm-map-markers' ),
+		'name' => _x( 'Locations', 'post type general name', 'wpmm-map-markers' ),
+		'singular_name' => _x( 'Location', 'post type singular name', 'wpmm-map-markers' ),
+		'add_new' => __( 'Add New', 'wpmm-map-markers' ),
 		'add_new_item' => __( 'Add New Location', 'wpmm-map-markers' ),
 		'edit_item' => __( 'Edit Location', 'wpmm-map-markers' ),
 		'new_item' => __( 'New Location', 'wpmm-map-markers' ),
@@ -23,7 +23,7 @@ function register_cpt_wpmm_location() {
 	$args = array(
 		'labels' => $labels,
 		'hierarchical' => false,
-		'description' => 'Represents an entity that can be represented as a location on a Google Map',
+		'description' => __('Represents an entity that can be represented as a location on a Google Map','wpmm-map-markers'),
 		'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 		'public' => true,
 		'show_ui' => true,
@@ -31,7 +31,7 @@ function register_cpt_wpmm_location() {
 		'show_in_nav_menus' => true,
 		'publicly_queryable' => true,
 		'exclude_from_search' => false,
-		'has_archive' => true,
+		'has_archive' => false,
 		'query_var' => true,
 		'can_export' => true,
 		'rewrite' => true,
@@ -53,4 +53,4 @@ function wpmm_rewrite_flush() {
 	flush_rewrite_rules();
 }
 
-register_activation_hook( __FILE__, 'wpmm_rewrite_flush' );
+register_activation_hook( WPMM_FILE, 'wpmm_rewrite_flush' );

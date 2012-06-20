@@ -64,6 +64,7 @@ function wpmm_plugin_setup() {
 
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
+	define('WPMM_FILE', __FILE__);
 
 	/* Set constant path to the WPMM plugin URL. */
 	define( 'WPMM_URL', plugin_dir_url( __FILE__ ) );
@@ -79,7 +80,7 @@ function wpmm_plugin_setup() {
 	if ( is_admin() ) {
 
 		/* Load translations. */
-		load_plugin_textdomain( 'wpmm-map-markers', false, 'wp-map-markers/languages' );
+		load_plugin_textdomain( 'wpmm-map-markers', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/'  );
 
 		/* Load the plugin's admin file. */
 		require_once WPMM_DIR . '/lib/admin.php';
