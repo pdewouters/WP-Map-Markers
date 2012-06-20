@@ -3,7 +3,7 @@ Contributors: pauldewouters
 Tags: google maps, store locator, maps
 Requires at least: 3.3
 Tested up to: 3.4
-Stable tag: 0.9.5
+Stable tag: 0.9.6
 
 WP Map Markers is a plugin that brings the Google Maps Store locator library to your WordPress website. It uses the v3 API.
 
@@ -36,7 +36,9 @@ Ex: [wpmm_map map="map-slug"]
 The map slug is found on the list of maps page. 
 Maps is a custom taxonomy 
 
-[youtube http://youtu.be/5zA8G73oZ0k]
+More information at [WP Map Markers.com](http://wpmapmarkers.com/).
+
+[youtube http://www.youtube.com/watch?v=5zA8G73oZ0k]
 
 == Screenshots ==
 
@@ -46,6 +48,9 @@ Maps is a custom taxonomy
 4. Screenshot 4
 
 ==Changelog==
+
+= 0.9.6 =
+corrected localization bugs following review
 
 = 0.9.5 =
 added youtube video and screenshots

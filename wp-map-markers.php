@@ -4,7 +4,7 @@
   Plugin Name: WP Map markers
   Plugin URI: http://wpmapmarkers.com
   Description: Allows you to mark your store locations on a Google map. Searchable and gives driving directions. Uses geolocation.
-  Version: 0.9.5
+  Version: 0.9.6
   Author: Paul de Wouters
   Author URI: http://wpconsult.net
   License: GPLv2
