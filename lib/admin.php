@@ -61,7 +61,7 @@ function wpmm_initialize_plugin_options() {
 		__( 'Choose the map type.', 'wpmm-map-markers' )
 			)
 	);
-	
+
 	add_settings_field(
 			'wpmm_map_width', // ID used to identify the field throughout the plugin
 			__( 'Map width', 'wpmm-map-markers' ), // The label to the left of the option interface element
@@ -71,9 +71,9 @@ function wpmm_initialize_plugin_options() {
 			array( // The array of arguments to pass to the callback. In this case, just a description.
 		__( 'Define the map width (ex: 500px or 100%).', 'wpmm-map-markers' )
 			)
-	);	
-	
-		add_settings_field(
+	);
+
+	add_settings_field(
 			'wpmm_map_height', // ID used to identify the field throughout the plugin
 			__( 'Map height', 'wpmm-map-markers' ), // The label to the left of the option interface element
 			'wpmm_map_height_callback', // The name of the function responsible for rendering the option interface
@@ -82,7 +82,29 @@ function wpmm_initialize_plugin_options() {
 			array( // The array of arguments to pass to the callback. In this case, just a description.
 		__( 'Define the map height (ex: 500px or 100%).', 'wpmm-map-markers' )
 			)
-	);	
+	);
+	
+		add_settings_field(
+			'wpmm_panel_width', // ID used to identify the field throughout the plugin
+			__( 'Panel width', 'wpmm-map-markers' ), // The label to the left of the option interface element
+			'wpmm_panel_width_callback', // The name of the function responsible for rendering the option interface
+			'wpmm_plugin_map_options', // The page on which this option will be displayed
+			'general_settings_section', // The name of the section to which this field belongs
+			array( // The array of arguments to pass to the callback. In this case, just a description.
+		__( 'Define the panel width (ex: 500px or 100%).', 'wpmm-map-markers' )
+			)
+	);
+
+	add_settings_field(
+			'wpmm_panel_height', // ID used to identify the field throughout the plugin
+			__( 'Panel height', 'wpmm-map-markers' ), // The label to the left of the option interface element
+			'wpmm_panel_height_callback', // The name of the function responsible for rendering the option interface
+			'wpmm_plugin_map_options', // The page on which this option will be displayed
+			'general_settings_section', // The name of the section to which this field belongs
+			array( // The array of arguments to pass to the callback. In this case, just a description.
+		__( 'Define the panel height (ex: 500px or 100%).', 'wpmm-map-markers' )
+			)
+	);
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -128,7 +150,7 @@ function wpmm_default_mapcenter_callback( $args ) {
 
 	// Here, we will take the first argument of the array and add it to a label next to the checkbox
 	$html .= '<label for="wpmm_plugin_map_options[default_mapcenter]"> ' . $args[0] . '</label>';
-$html .='<form id="wpmm-form-settings" action="" method="POST"><div><input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" /><img src="' . admin_url( '/images/wpspin_light.gif' ) . '" class="waiting" id="wpmm_loading" style="display:none;"/></div></form><div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>';
+	$html .='<form id="wpmm-form-settings" action="" method="POST"><div><input id="wpmm_geocode_button" class="button" type="button" value="Geocode map center" /><img src="' . admin_url( '/images/wpspin_light.gif' ) . '" class="waiting" id="wpmm_loading" style="display:none;"/></div></form><div style="width: 60%;height:300px;"><div id="map_canvas" style="width:100%; height:100%"></div></div>';
 	echo $html;
 }
 
@@ -223,14 +245,42 @@ function wpmm_map_height_callback( $args ) {
 	echo $html;
 }
 
+function wpmm_panel_width_callback( $args ) {
+
+	// Read the options collection
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+	$html = '<input type="text" id="wpmm_plugin_map_options[wpmm_panel_width]" name="wpmm_plugin_map_options[wpmm_panel_width]" value="' . $options['wpmm_panel_width'] . '" />';
+
+	// Here, we will take the first argument of the array and add it to a label next to the checkbox
+	$html .= '<label for="wpmm_plugin_map_options[wpmm_panel_width]"> ' . $args[0] . '</label>';
+
+	echo $html;
+}
+
+function wpmm_panel_height_callback( $args ) {
+
+	// Read the options collection
+	$options = get_option( 'wpmm_plugin_map_options' );
+
+	// Note the ID and the name attribute of the element match that of the ID in the call to add_settings_field
+	$html = '<input type="text" id="wpmm_plugin_map_options[wpmm_panel_height]" name="wpmm_plugin_map_options[wpmm_panel_height]" value="' . $options['wpmm_panel_height'] . '" />';
+
+	// Here, we will take the first argument of the array and add it to a label next to the checkbox
+	$html .= '<label for="wpmm_plugin_map_options[wpmm_panel_height]"> ' . $args[0] . '</label>';
+
+	echo $html;
+}
+
 // end sandbox_radio_element_callback
 
 function wpmm_create_menu_page() {
 	global $wpmm_settings_page;
 
 	/* If no settings are available, add the default settings to the database. */
-	if ( false === get_option( 'wpmm_plugin_map_options' ) )
-		add_option( 'wpmm_plugin_map_options', wpmm_get_default_settings(), '', 'yes' );
+	//if ( false === get_option( 'wpmm_plugin_map_options' ) )
+	//	add_option( 'wpmm_plugin_map_options', wpmm_get_default_settings(), '', 'yes' );
 
 	$wpmm_settings_page = add_options_page(
 			__( 'WP Map Markers Options', 'wpmm-map-markers' ), // The title to be displayed on the corresponding page for this menu
@@ -256,8 +306,10 @@ function wpmm_plugin_display() {
 		<h3><?php _e( 'Getting started', 'wpmm-map-markers' ); ?></h3>
 		<div class="updated">
 
-			<p><?php $add_map_url = admin_url() . 'edit-tags.php?taxonomy=wpmm_map&post_type=wpmm_location';
-	printf( __( 'You should start by adding a map %1$shere%2$s.', 'wpmm-map-markers' ), '<a href="' . $add_map_url . '">', '</a>' ); ?></p>
+			<p><?php
+	$add_map_url = admin_url() . 'edit-tags.php?taxonomy=wpmm_map&post_type=wpmm_location';
+	printf( __( 'You should start by adding a map %1$shere%2$s.', 'wpmm-map-markers' ), '<a href="' . $add_map_url . '">', '</a>' );
+	?></p>
 
 		</div>
 		<!-- Make a call to the WordPress function for rendering errors when settings are saved. -->
@@ -308,6 +360,9 @@ function wpmm_unique_capability( $cap ) {
 
 function wpmm_get_default_settings() {
 
+	/* Add the database version setting. */
+	add_option( 'wpmm_db_version', WPMM_DB_VERSION );
+
 	$map_center = 'rome,italy';
 	$lat_lng_def = wpmm_do_geocode_address( 'rome,italy' );
 	$map_center_lat = $lat_lng_def['latitude'];
@@ -321,7 +376,9 @@ function wpmm_get_default_settings() {
 		'default_longitude' => $map_center_lng,
 		'map_type' => 'google.maps.MapTypeId.ROADMAP',
 		'wpmm_map_height' => '450px',
-		'wpmm_map_width' => '100%'
+		'wpmm_map_width' => '68%',
+		'wpmm_panel_height' => '450px',
+		'wpmm_panel_width' => '28%'		
 	);
 	return $wpmm_settings;
 }
@@ -352,4 +409,45 @@ function wpmm_nag_ignore() {
 	if ( isset( $_GET['wpmm_nag_ignore'] ) && '0' == $_GET['wpmm_nag_ignore'] ) {
 		add_user_meta( $user_id, 'wpmm_ignore_notice', 'true', true );
 	}
+}
+
+/* Hook your version check to 'init' to run it on every page. You can use 'admin_menu' to just run it in the admin. */
+add_action( 'admin_menu', 'wpmm_version_check' );
+
+/* Checks the version number and runs install or update functions if needed. */
+
+function wpmm_version_check() {
+
+	/* Get the old database version. */
+	$old_db_version = get_option( 'wpmm_db_version' );
+
+	/* If there is no old database version, run the install. */
+	if ( empty( $old_db_version ) ) {
+		/* if option exists, this version predates the DB setting, so recreate */
+		if ( false !== get_option( 'wpmm_plugin_map_options' ) ) {
+			delete_option( 'wpmm_plugin_map_options' );
+		}
+		add_option( 'wpmm_plugin_map_options', wpmm_get_default_settings(), '', 'yes' );
+	}
+	/* If the old version is less than the new version, run the update. */ 
+	elseif ( intval( $old_db_version ) < intval( WPMM_DB_VERSION ) )
+		wpmm_update();
+}
+
+/* Function for updating your theme/plugin settings. */
+
+function wpmm_update() {
+
+	/* Update the database version setting. */
+	update_option( 'wpmm_db_version', WPMM_DB_VERSION );
+
+	/* Update the user's new theme/plugin settings here if there are new settings. */
+	// get_option(); // Get the previous settings.
+	$options = get_option( 'wpmm_plugin_map_options' );
+	// You'd need to merge the old settings and new settings here.
+	// update_option(); // Update the settings.
+	// merge new db options with existing
+	$new_options = array('wpmm_map_width' => '70%','wpmm_panel_width' => '70%', 'wpmm_panel_height' => '450px');
+	$result = array_merge($options, $new_options);
+	update_option($options, $result);
 }

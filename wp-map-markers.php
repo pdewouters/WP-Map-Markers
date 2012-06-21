@@ -3,7 +3,7 @@
   Plugin Name: WP Map markers
   Plugin URI: http://wpmapmarkers.com
   Description: Allows you to mark your store locations on a Google map. Searchable and gives driving directions. Uses geolocation.
-  Version: 0.9.6
+  Version: 0.9.9.1
   Author: Paul de Wouters
   Author URI: http://wpconsult.net
   License: GPLv2
@@ -32,6 +32,11 @@
  */
 if ( !defined( "WPMM_CURRENT_PAGE" ) )
 	define( "WPMM_CURRENT_PAGE", basename( $_SERVER['PHP_SELF'] ) );
+
+/* Define your theme/plugin database version. This should only change when new settings are added. */
+if ( !defined( 'WPMM_DB_VERSION' ) )
+	define( 'WPMM_DB_VERSION', 2 );
+
 
 if ( version_compare( PHP_VERSION, '5.2', '<' ) ) {
 	if ( is_admin() && (!defined( 'DOING_AJAX' ) || !DOING_AJAX) ) {
@@ -63,6 +68,8 @@ function wpmm_plugin_setup() {
 
 	/* Set constant path to the WPMM plugin directory. */
 	define( 'WPMM_DIR', plugin_dir_path( __FILE__ ) );
+	
+	/* Set constant path to the WPMM plugin file. */	
 	define( 'WPMM_FILE', __FILE__ );
 
 	/* Set constant path to the WPMM plugin URL. */
@@ -281,23 +288,33 @@ function wpmm_do_map_dimensions() {
 	$options = get_option( 'wpmm_plugin_map_options' );
 
 	if ( isset( $options['wpmm_map_height'] ) ) {
-		$height = $options['wpmm_map_height'];
+		$map_height = $options['wpmm_map_height'];
 	} else {
-		$height = '450px';
+		$map_height = '450px';
 	}
 	if ( isset( $options['wpmm_map_width'] ) ) {
-		$width = $options['wpmm_map_width'];
+		$map_width = $options['wpmm_map_width'];
 	} else {
-		$width = '450px';
+		$map_width = '68%';
 	}
-	echo "<style> #wpmm-container #map-canvas, #wpmm-container #panel {width: $width; height: $height; float: left; }</style>";
+		if ( isset( $options['wpmm_panel_height'] ) ) {
+		$panel_height = $options['wpmm_panel_height'];
+	} else {
+		$panel_height = '450px';
+	}
+	if ( isset( $options['wpmm_panel_width'] ) ) {
+		$panel_width = $options['wpmm_panel_width'];
+	} else {
+		$panel_width = '28%';
+	}
+	echo "<style> #wpmm-container {overflow:hidden;width:100%;} #wpmm-container #map-canvas {width: $map_width; height: $map_height; float: left; } #wpmm-container #panel {width: $panel_width; height: $panel_height; float: left; }</style>";
 }
 
 //action to add a custom button to the content editor
 function wpmm_add_map_button( $context ) {
 
 	//path to my icon
-	$img = WPMM_URL . '/images/map-icon.png';
+	$img = WPMM_URL . 'images/map-icon.png';
 
 	//the id of the container I want to show in the popup
 	$container_id = 'popup_container';
