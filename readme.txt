@@ -31,7 +31,10 @@ Add a few locations ( just like adding posts )
 Insert a map on a page or post by using the wpmm_map shortcode.
 Multiple maps on same page is not supported
 
-Ex: [wpmm_map map="map-slug"]
+Insert a map easily by selecting it from a dropdown menu located in the post editor
+
+== Shortcode ==
+Ex: [wpmm_map map="1"] where "1" is the ID of the Map found in the Map category for the locations.
 
 The map slug is found on the list of maps page. 
 Maps is a custom taxonomy 
