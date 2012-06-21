@@ -447,7 +447,8 @@ function wpmm_update() {
 	// You'd need to merge the old settings and new settings here.
 	// update_option(); // Update the settings.
 	// merge new db options with existing
-	$new_options = array('wpmm_map_width' => '70%','wpmm_panel_width' => '70%', 'wpmm_panel_height' => '450px');
+	$shadow = WPMM_URL . '/images/marker-shadow.png';
+	$new_options = array('wpmm_map_width' => '68%','wpmm_panel_width' => '28%', 'wpmm_panel_height' => '450px','marker_shadow' =>$shadow);
 	$result = array_merge($options, $new_options);
-	update_option($options, $result);
+	update_option('wpmm_plugin_map_options', $result);
 }
