@@ -118,14 +118,20 @@ jQuery(document).ready(function($) {
             $('#wpmm_loading').hide();
             $('#wpmm_geocode_button').attr('disabled', false);
 
-            google.maps.event.addListener (marker, 'dragend', 
+
+
+        });	
+        
+        return false;
+    });
+                google.maps.event.addListener (marker, 'dragend', 
                 function (event) {       
                     // Pan the maps center to the markers position
                     // you could do any of your own stuff here
                     var pos = marker.getPosition();
                     map.panTo(pos);   
 
-                    if( wpmm_vars.wpmm_post_id != '' ){
+                    if( $('input#_wpmm_latitude').length ){
                         $('input#_wpmm_latitude').val(pos.lat());
                         $('input#_wpmm_longitude').val(pos.lng());
                     }
@@ -134,9 +140,4 @@ jQuery(document).ready(function($) {
                         $('input#wpmm_plugin_map_options\\[default_longitude\\]').val(pos.lng());
                     } 
                 });
-
-        });	
-        
-        return false;
-    });
 });

@@ -46,9 +46,13 @@ google.maps.event.addDomListener(window, 'load', function() {
 
     var details = store.getDetails();
 
-    var html = ['<div class="store"><div class="title">', details.title,
-      '</div><div class="address">', details.address, '</div>',
-      '<div class="permalink misc"><a href="', details.link, '">view details</a></div><div class="thumb">', details.thumb , '</div>'].join('');
+    var html = ['<div class="store"><div class=" alignleft thumb">', 
+      details.thumb , '</div><div class="title">', 
+        details.title,
+      '</div><div class="address">', 
+      details.address, '</div>',
+      '<div class="permalink misc"><a href="', 
+      details.link, '">view details</a></div></div>'].join('');
 
     infoBubble.setContent(jQuery(html)[0]);
     return infoBubble;
