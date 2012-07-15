@@ -133,7 +133,6 @@ function wpmm_fetch_stores( $map ) {
 
 	// fetch location posts which have a latitude, meaning geocoding works
 	$args = array(
-		'posts_per_page' => -1,
 		'post_type' => 'wpmm_location',
 		'post_status' => 'publish',
 		'meta_query' => array(
