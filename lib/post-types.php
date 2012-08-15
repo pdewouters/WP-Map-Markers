@@ -1,4 +1,28 @@
 <?php
+/**
+ * Example for writing a WP plugin that adds a custom post type and flushes
+ * rewrite rules only once on initialization.
+ */
+
+/**
+ * On activation, we'll set an option called 'my_plugin_name_flush' to true,
+ * so our plugin knows, on initialization, to flush the rewrite rules.
+ */
+function wpmm_cpt_activation() {
+    add_option( 'wpmm_flush', 'true' );
+}
+
+register_activation_hook( WPMM_FILE, 'wpmm_cpt_activation' );
+
+/**
+ * On deactivation, we'll remove our 'my_plugin_name_flush' option if it is
+ * still around. It shouldn't be after we register our post type.
+ */
+function wpmm_cpt_deactivation() {
+    delete_option( 'wpmm_flush' );
+}
+
+register_deactivation_hook( WPMM_FILE , 'wpmm_cpt_deactivation' );
 
 // Register the post type for locations
 add_action( 'init', 'register_cpt_wpmm_location' );
@@ -34,23 +58,16 @@ function register_cpt_wpmm_location() {
 		'has_archive' => false,
 		'query_var' => true,
 		'can_export' => true,
-		'rewrite' => true,
+		'rewrite' => array( 'slug' => 'locations'),
 		'capability_type' => 'post'
 	);
 
 	register_post_type( 'wpmm_location', $args );
+
+	    // Check the option we set on activation.
+    if (get_option('wpmm_flush') == 'true') {
+        flush_rewrite_rules();
+        delete_option('wpmm_flush');
+    }
 }
 
-function wpmm_rewrite_flush() {
-	// First, we "add" the custom post type via the above written function.
-	// Note: "add" is written with quotes, as CPTs don't get added to the DB,
-	// They are only referenced in the post_type column with a post entry, 
-	// when you add a post of this CPT.
-	register_cpt_wpmm_location();
-
-	// ATTENTION: This is *only* done during plugin activation hook in this example!
-	// You should *NEVER EVER* do this on every page load!!
-	flush_rewrite_rules();
-}
-
-register_activation_hook( WPMM_FILE, 'wpmm_rewrite_flush' );
